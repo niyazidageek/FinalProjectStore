@@ -41,7 +41,7 @@ namespace FinalProjectStore.Services
         #endregion
 
         #region Invoice
-        public void AddInvoice(string name, int quantity, double cost)
+        public void AddInvoice(int code, int quantity)
         {
             
 

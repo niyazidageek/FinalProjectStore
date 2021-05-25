@@ -14,9 +14,17 @@ namespace FinalProjectStore.Services
         public List<Product> Products { get; set; }
         public List<Invoice> Invoices { get; set; }
 
+
+        public MarketMenu()
+        {
+            Products = new();
+            Invoices = new();
+        }
+
         #region Product
         public void AddProduct(string name, double price, int code, string category, int quantity)
         {
+                 
             Product product = new();
             product.Name = name;
             product.Price = price;
@@ -48,54 +56,55 @@ namespace FinalProjectStore.Services
         public List<Product> SearcProductByPrice(double startprice, double endprice)
         {
             var res = Products.FindAll(s => s.Price >= startprice && s.Price <= endprice);
-            return res;
+            return res.ToList();
         }
         public List<Product> SearchByCategory(string category)
         {
+            //if (Category.Baby.ToString() == category)
+            //{
+
+            //}
             var res = Products.FindAll(s => s.Category == category);
-            return res;
+            return res.ToList();
 
         }
         public List<Product> SearchByName(string name)
         {
             var temp = Products.FindAll(s => s.Name == name);
             
-            return temp;
+            return temp.ToList();
         }
         #endregion
 
         #region Invoice
-        public void AddInvoice(string name, int quantity, double cost)
+        public void AddInvoice(int code, int quantity)
         {
+            
+            Product product = Products.FirstOrDefault(s => s.Code == code);
+            SoldProduct sold = new();
             Invoice invoice = new();
-            Product product = new();
-            invoice.SoldProduct.Product.Name = name;
-            invoice.SoldProduct.Product.Quantity = quantity;
-            invoice.Cost = invoice.SoldProduct.Product.Price;
+            product.Quantity = product.Quantity - quantity;
+            invoice.Cost = product.Price * quantity;
+            invoice.SoldProducts.Add(sold);
             Invoices.Add(invoice);
-            int current = product.Quantity;
-            if (product.Name == name)
-            {
-                product.Quantity = current - quantity;
-            }
 
+           
         }
         public void ReturnProduct(string name, int quantity)
         {
-            Invoice invoice = new();
-            int index = Invoices.FindIndex(s => s.SoldProduct.Product.Name == name && s.SoldProduct.Product.Quantity == quantity);
-            Invoices.RemoveAt(index);
             Product product = new();
-            int current = product.Quantity;
-            if (product.Name == name)
-            {
-                product.Quantity = current + quantity;
-            }
+            SoldProduct sold = new();
+            Invoice invoice = new();
+            invoice.SoldProducts.Find(s=> s.Product.Name == name && s.Product.Quantity >= quantity);
+            product.Quantity = product.Quantity + quantity;
+            invoice.Cost = invoice.Cost - (product.Price * quantity);
+            invoice.SoldProducts.Remove(sold);
+            Invoices.Remove(invoice);
 
         }
         public List<Invoice> ReturnInvoices()
         {
-            return Invoices;
+            return Invoices.ToList();
         }
         public void DeleteInvoice(int no)
         {

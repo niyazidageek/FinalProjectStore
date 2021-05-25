@@ -10,14 +10,16 @@ namespace FinalProjectStore.Data.Entities
     public class Invoice : BaseEntity
     {
         private static int Count = 0;
-        public SoldProduct SoldProduct { get; set; }
+        public List<SoldProduct> SoldProducts  { get; set; }
         public double Cost { get; set; }
         public DateTime Date { get; set; }
 
         public Invoice()
         {
+            SoldProducts = new();
             Count++;
             Number = Count;
+            Date = DateTime.Now;
         }
 
     }
