@@ -108,6 +108,7 @@ namespace FinalProjectStore.Services
             {
                 table1.AddRow(item.SoldProducts.Count);
             }
+            table.Write();
             table1.Write();
             Console.WriteLine();
         }
@@ -137,6 +138,7 @@ namespace FinalProjectStore.Services
         {
             var table = new ConsoleTable("Number", "Cost", "Quantity", "Date");
             DateTime date = DateTime.Parse(Console.ReadLine());
+            
             foreach (var item in market.SearchByOnlyDate(date))
             {
                 table.AddRow(item.Number, item.Cost, item.SoldProducts.Count, item.Date);
@@ -178,9 +180,10 @@ namespace FinalProjectStore.Services
         }
         public static void AddReturnProductMenu()
         {
+            int number = int.Parse(Console.ReadLine());
             string name = Console.ReadLine();
             int quantity = int.Parse(Console.ReadLine());
-            market.ReturnProduct(name, quantity);
+            market.ReturnProduct(number, name, quantity);
         }
         public static void AddDeleteInvoiceMenu()
         {

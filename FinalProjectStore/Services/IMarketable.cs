@@ -46,7 +46,7 @@ namespace FinalProjectStore.Services
             
 
         }
-        public void ReturnProduct(string name, int quantity)
+        public void ReturnProduct(int number, string name, int quantity)
         {
            
 

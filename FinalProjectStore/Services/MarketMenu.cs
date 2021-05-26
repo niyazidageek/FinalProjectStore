@@ -124,15 +124,23 @@ namespace FinalProjectStore.Services
 
            
         }
-        public void ReturnProduct(string name, int quantity)
+        public void ReturnProduct(int number, string name, int quantity)
         {
             Product product = Products.FirstOrDefault(s => s.Name == name);
-            SoldProduct sold = new(product);
-            Invoice invoice = new();
-            product.Quantity = product.Quantity + quantity;
-            invoice.Cost = invoice.Cost - (product.Price * quantity);
-            invoice.SoldProducts.Remove(sold);
+            Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == number);
+            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.quantity >= quantity);
+
             Invoices.Remove(invoice);
+            invoice.SoldProducts.Remove(sold);
+            product.Quantity = product.Quantity + quantity;
+            invoice.Cost -= product.Price * quantity;
+            sold.quantity -= quantity;
+            Invoices.Add(invoice);
+            invoice.SoldProducts.Add(sold);
+            
+
+            
+            
 
         }
         public List<Invoice> ReturnInvoices()
