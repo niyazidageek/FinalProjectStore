@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace FinalProjectStore.Data.Entities
 {
@@ -12,9 +13,10 @@ namespace FinalProjectStore.Data.Entities
         
         private static int Count = 0;
         public Product Product { get; set; }
-        public SoldProduct()
+        public int quantity { get; set; }
+        public SoldProduct(Product product)
         {
-           
+            Product = product;
             Count++;
             Number = Count;
         }

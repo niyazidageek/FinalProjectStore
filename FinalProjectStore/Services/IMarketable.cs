@@ -15,7 +15,7 @@ namespace FinalProjectStore.Services
           
 
         }
-        public void ChangeProductByCode(int code, string name, double price, int codenew, int quantity, string category)
+        public void ChangeProductByCode(int code, string name, double price, int quantity, string category)
         {
             
 
@@ -55,6 +55,7 @@ namespace FinalProjectStore.Services
         {
            
         }
+        
         public void DeleteInvoice(int no)
         {
            

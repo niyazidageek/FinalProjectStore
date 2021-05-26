@@ -19,29 +19,30 @@ namespace FinalProjectStore.Services
         {
             Products = new();
             Invoices = new();
+            
         }
 
         #region Product
-        public void AddProduct(string name, double price, int code, string category, int quantity)
+        public void AddProduct(string name, double price, string category, int quantity)
         {
                  
             Product product = new();
             product.Name = name;
             product.Price = price;
-            product.Code = code;
+            
             product.Quantity = quantity;
             product.Category = category;
             Products.Add(product);
 
         }
-        public void ChangeProductByCode(int code, string name, double price, int codenew, int quantity, string category)
+        public void ChangeProductByCode(int code, string name, double price, int quantity, string category)
         {
             var index = Products.FindIndex(s => s.Code == code);
             Products.RemoveAt(index);
             Product product = new();
             product.Name = name;
             product.Price = price;
-            product.Code = codenew;
+            
             product.Quantity = quantity;
             product.Category = category;
             Products.Add(product);
@@ -79,23 +80,55 @@ namespace FinalProjectStore.Services
         #region Invoice
         public void AddInvoice(int code, int quantity)
         {
-            
-            Product product = Products.FirstOrDefault(s => s.Code == code);
-            SoldProduct sold = new();
+            int option = 0;
             Invoice invoice = new();
+            Product product = Products.FirstOrDefault(s => s.Code == code);
+            SoldProduct sold = new(product);           
             product.Quantity = product.Quantity - quantity;
-            invoice.Cost = product.Price * quantity;
+            invoice.Cost += product.Price * quantity;
+            sold.quantity += quantity;
             invoice.SoldProducts.Add(sold);
-            Invoices.Add(invoice);
+            
+
+
+            do
+            {
+                Console.WriteLine("Do you want to buy another item?");
+                Console.WriteLine("1.Yes");
+                Console.WriteLine("2.No");
+                Console.WriteLine("Select an option, please");
+                string optionstr = Console.ReadLine();
+                while(!int.TryParse(optionstr, out option))
+                {
+                    Console.WriteLine("Enter a number, please");
+                    optionstr = Console.ReadLine();
+                }
+                switch (option)
+                {
+                    case 1:
+                        code = int.Parse(Console.ReadLine());
+                        quantity = int.Parse(Console.ReadLine());
+                        product = Products.FirstOrDefault(s => s.Code == code);
+                        sold = new(product);
+                        product.Quantity = product.Quantity - quantity;
+                        invoice.Cost += product.Price * quantity;
+                        invoice.SoldProducts.Add(sold);                        
+                        break;
+                    case 2:
+                        Console.WriteLine("Invoice added");
+                        Invoices.Add(invoice);
+                        break;
+                }
+            } while (option!=2);
+            
 
            
         }
         public void ReturnProduct(string name, int quantity)
         {
-            Product product = new();
-            SoldProduct sold = new();
+            Product product = Products.FirstOrDefault(s => s.Name == name);
+            SoldProduct sold = new(product);
             Invoice invoice = new();
-            invoice.SoldProducts.Find(s=> s.Product.Name == name && s.Product.Quantity >= quantity);
             product.Quantity = product.Quantity + quantity;
             invoice.Cost = invoice.Cost - (product.Price * quantity);
             invoice.SoldProducts.Remove(sold);
@@ -106,21 +139,28 @@ namespace FinalProjectStore.Services
         {
             return Invoices.ToList();
         }
+        
         public void DeleteInvoice(int no)
         {
-            Invoice invoice = new();
-            int index = Invoices.FindIndex(s => s.Number == no);
-            Invoices.RemoveAt(index);
+            Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == no);
+            
+            Product product = new();
+            SoldProduct sold = new(product);
+            foreach (var item in invoice.SoldProducts)
+            {
+                product.Quantity += item.Quantity;
+            }
+            Invoices.Remove(invoice);
         }
         public List<Invoice> SearchByDate(DateTime startdate, DateTime enddate)
         {
-            var result = Invoices.Where(m => m.Date >= startdate && m.Date <= enddate);
-            return (List<Invoice>)result;
+            var result = Invoices.Where(m => m.Date>= startdate && m.Date <= enddate);
+            return result.ToList();
         }
         public List<Invoice> SearchInvoiceByPrice(double startcost, double endcost)
         {
             var index = Invoices.FindAll(s => s.Cost >= startcost && s.Cost <= endcost);
-            return index;
+            return index.ToList();
         }
         public List<Invoice> SearchByNumber(int no)
         {
@@ -129,8 +169,8 @@ namespace FinalProjectStore.Services
         }
         public List<Invoice> SearchByOnlyDate(DateTime date)
         {
-            var res = Invoices.Where(s => s.Date == date);
-            return (List<Invoice>)res;
+            var res = Invoices.Where(s => s.Date.Day == date.Day && s.Date.Month == date.Month && s.Date.Month == date.Month);
+            return res.ToList();
         }
         #endregion
         

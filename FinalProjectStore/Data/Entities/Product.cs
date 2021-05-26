@@ -18,12 +18,17 @@ namespace FinalProjectStore.Data.Entities
     }
     public class Product : BaseEntity
     {
+        private static int Count = 1000;
         
         public string Name { get; set; }
         public double Price { get; set; }
-        public int Code { get; set; }
         public string Category { get; set; }
 
+        public Product()
+        {
+            Count++;
+            Code = Count;
+        }
         
         
     }

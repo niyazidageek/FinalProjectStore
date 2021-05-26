@@ -1,10 +1,12 @@
 ﻿using ConsoleTables;
 using FinalProjectStore.Data.Entities;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace FinalProjectStore.Services
 {
@@ -72,10 +74,11 @@ namespace FinalProjectStore.Services
             var table = new ConsoleTable("Number", "Cost", "Quantity");
             foreach (var item in market.ReturnInvoices())
             {
-                table.AddRow(item.Number, item.Cost, item.Quantity);
+                table.AddRow(item.Number, item.Cost, item.SoldProducts.Count);
 
             }
             table.Write();
+            
             Console.WriteLine();
         }
         public static void DisplayInvoicesByDate()
@@ -85,7 +88,7 @@ namespace FinalProjectStore.Services
             DateTime enddate = DateTime.Parse(Console.ReadLine());
             foreach (var item in market.SearchByDate(startdate, enddate))
             {
-                table.AddRow(item);
+                table.AddRow(item.Number, item.Cost, item.SoldProducts.Count, item.Date);
             }
             table.Write();
             Console.WriteLine();
@@ -93,26 +96,41 @@ namespace FinalProjectStore.Services
 
         public static void DisplayInvoiceByCost()
         {
-            var table = new ConsoleTable("Number", "Cost", "Quantity", "Date");
+            var table = new ConsoleTable("Number", "Cost",  "Date");
             double startcost = double.Parse(Console.ReadLine());
             double endcost = double.Parse(Console.ReadLine());
             foreach (var item in market.SearchInvoiceByPrice(startcost, endcost))
             {
-                table.AddRow(item);
+                table.AddRow(item.Number, item.Cost, item.Date );
             }
-            table.Write();
+            var table1 = new ConsoleTable("Quantity");
+            foreach (var item in market.Invoices)
+            {
+                table1.AddRow(item.SoldProducts.Count);
+            }
+            table1.Write();
             Console.WriteLine();
         }
 
         public static void DisplayInvoiceByNo()
         {
-            var table = new ConsoleTable("Number", "Cost", "Quantity", "Date");
+            var table = new ConsoleTable("Number", "Cost",  "Date");
             int no = int.Parse(Console.ReadLine());
             foreach (var item in market.SearchByNumber(no))
             {
-                table.AddRow(item);
+                table.AddRow(item.Number, item.Cost, item.Date);
+                
+            }
+            var table1 = new ConsoleTable("Name", "Price", "Quantity");
+            foreach (var invoice in market.Invoices)
+            {
+                foreach (var soldProduct in invoice.SoldProducts.ToList())
+                {
+                    table1.AddRow(soldProduct.Product.Name, soldProduct.Product.Price, soldProduct.quantity);
+                }
             }
             table.Write();
+            table1.Write();
             Console.WriteLine();
         }
         public static void DisplayInvoiceByOnlyDate()
@@ -121,7 +139,7 @@ namespace FinalProjectStore.Services
             DateTime date = DateTime.Parse(Console.ReadLine());
             foreach (var item in market.SearchByOnlyDate(date))
             {
-                table.AddRow(item);
+                table.AddRow(item.Number, item.Cost, item.SoldProducts.Count, item.Date);
             }
             table.Write();
             Console.WriteLine();
@@ -131,20 +149,20 @@ namespace FinalProjectStore.Services
         {
             string name = Console.ReadLine();
             double price = double.Parse(Console.ReadLine());
-            int code = int.Parse(Console.ReadLine());
+            
             string category = Console.ReadLine();
             int quantity = int.Parse(Console.ReadLine());
-            market.AddProduct(name, price, code, category, quantity);
+            market.AddProduct(name, price, category, quantity);
         }
         public static void AddChangeProductMenu()
         {
             int code = int.Parse(Console.ReadLine());
             string name = Console.ReadLine();
             double price = double.Parse(Console.ReadLine());
-            int codenew = int.Parse(Console.ReadLine());
+            
             int quantity = int.Parse(Console.ReadLine());
             string category = Console.ReadLine();
-            market.ChangeProductByCode(code, name, price, codenew, quantity, category);
+            market.ChangeProductByCode(code, name, price, quantity, category);
         }
         public static void AddRemoveProductMenu()
         {
