@@ -37,7 +37,7 @@ namespace FinalProjectStore
                             Console.WriteLine("5. Show products by category");
                             Console.WriteLine("6. Show products by price range");
                             Console.WriteLine("7. Show products by name");
-                            Console.WriteLine("0. Exit");
+                            Console.WriteLine("0. Back");
                             Console.WriteLine("Select an option, please");
                             string optionstr = Console.ReadLine();
                             while (!int.TryParse(optionstr, out option))
@@ -69,7 +69,7 @@ namespace FinalProjectStore
                                     MenuService.DisplayProductByName();
                                     break;
                                 case 0:
-                                    Console.WriteLine("Good bye!");
+                                    
                                     break;
                                 default:
                                     Console.WriteLine("There is no such option");
@@ -89,7 +89,7 @@ namespace FinalProjectStore
                             Console.WriteLine("6. Show invoices by cost range");
                             Console.WriteLine("7. Show invoice by exact date");
                             Console.WriteLine("8. Show invoice by number");
-                            Console.WriteLine("0. Exit");
+                            Console.WriteLine("0. Back");
                             Console.WriteLine("Select an option, please");
                             string optionstr2 = Console.ReadLine();
                             while (!int.TryParse(optionstr2, out option2))
@@ -124,7 +124,7 @@ namespace FinalProjectStore
                                     MenuService.DisplayInvoiceByNo();
                                     break;
                                 case 0:
-                                    Console.WriteLine("Good Bye!");
+                                    
                                     break;
                                 default:
                                     Console.WriteLine("There is no such option");

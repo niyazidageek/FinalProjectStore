@@ -149,31 +149,43 @@ namespace FinalProjectStore.Services
         #endregion
         public static void AddProductMenu()
         {
+            Console.WriteLine("Enter the name of the product, please");
             string name = Console.ReadLine();
+            Console.WriteLine("Enter the price of the product, please");
             double price = double.Parse(Console.ReadLine());
-            
+            Console.WriteLine("Enter the category of the product, please");
             string category = Console.ReadLine();
+            Console.WriteLine("Enter the quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
             market.AddProduct(name, price, category, quantity);
+            Console.WriteLine("Product added");
         }
         public static void AddChangeProductMenu()
         {
+            Console.WriteLine("Enter the code of the product, please");
             int code = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter the new name of the product, please");
             string name = Console.ReadLine();
+            Console.WriteLine("Enter the new price of the product, please");
             double price = double.Parse(Console.ReadLine());
-            
+            Console.WriteLine("Enter the new quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter the new quantity of the product, please");
             string category = Console.ReadLine();
             market.ChangeProductByCode(code, name, price, quantity, category);
+            Console.WriteLine("Product changed");
         }
         public static void AddRemoveProductMenu()
         {
+            Console.WriteLine("Enter the code of the product, please");
             int code = int.Parse(Console.ReadLine());
             market.DeleteProductByCode(code);
         }
         public static void AddInvoiceMenu()
         {
+            Console.WriteLine("Enter the code of the product, please");
             int code = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter the quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
             
             market.AddInvoice(code, quantity);
@@ -181,12 +193,16 @@ namespace FinalProjectStore.Services
         public static void AddReturnProductMenu()
         {
             int number = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter the code of the product, please");
             string name = Console.ReadLine();
+            Console.WriteLine("Enter the quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
             market.ReturnProduct(number, name, quantity);
+            Console.WriteLine("Product/products returned");
         }
         public static void AddDeleteInvoiceMenu()
         {
+            Console.WriteLine("Enter the number of the invoice, please");
             int no = int.Parse(Console.ReadLine());
             market.DeleteInvoice(no);
         }
