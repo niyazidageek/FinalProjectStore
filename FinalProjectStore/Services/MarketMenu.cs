@@ -35,11 +35,10 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Product quantity");
                  
             Product product = new();
-            product.Name = name;
-            product.Price = price;
-            
+            product.Name = name; //.First().ToString().ToUpper() + name.Substring(1);
+            product.Price = price;           
             product.Quantity = quantity;
-            product.Category = category;
+            product.Category = category.ToLower();
             Products.Add(product);
 
         }
@@ -61,7 +60,7 @@ namespace FinalProjectStore.Services
             product.Name = name;
             product.Price = price;       
             product.Quantity = quantity;
-            product.Category = category;
+            product.Category = category.ToLower();
             Products.Add(product);
 
         }
@@ -87,13 +86,9 @@ namespace FinalProjectStore.Services
         public List<Product> SearchByCategory(string category)
         {
 
-            //if (Category.Baby.ToString() == category)
-            //{
-
-            //}
             if (string.IsNullOrEmpty(category))
                 throw new ArgumentNullException("Product category");
-            var res = Products.FindAll(s => s.Category == category);
+            var res = Products.FindAll(s => s.Category == category.ToLower());
             if (res == null)
                 throw new KeyNotFoundException();
             return res.ToList();
@@ -128,6 +123,7 @@ namespace FinalProjectStore.Services
             invoice.Cost += product.Price * quantity;
             sold.quantity += quantity;
             invoice.SoldProducts.Add(sold);
+            invoice.Status = "Exists";
             
 
 
@@ -215,13 +211,14 @@ namespace FinalProjectStore.Services
             if (invoice == null)
                 throw new KeyNotFoundException();
 
-            Product product = new();
-            SoldProduct sold = new(product);
-            foreach (var item in invoice.SoldProducts)
+            var res = invoice.SoldProducts.ToList();
+            //SoldProduct sold = new(product);
+            foreach (var item in res)
             {
-                product.Quantity += item.Quantity;
+                item.Product.Quantity += item.quantity;
             }
-            Invoices.Remove(invoice);
+            invoice.Status = "Deleted";
+            
         }
         public List<Invoice> SearchByDate(DateTime startdate, DateTime enddate)
         {
@@ -253,7 +250,7 @@ namespace FinalProjectStore.Services
         }
         public List<Invoice> SearchByOnlyDate(DateTime date)
         {
-            var res = Invoices.Where(s => s.Date.Day == date.Day && s.Date.Month == date.Month && s.Date.Month == date.Month);
+            var res = Invoices.Where(s => s.Date.Day == date.Day && s.Date.Month == date.Month && s.Date.Month == date.Month && s.Date.Year == date.Year);
             if (res == null)
                 throw new KeyNotFoundException();
             return res.ToList();

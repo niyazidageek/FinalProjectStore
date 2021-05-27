@@ -13,6 +13,7 @@ namespace FinalProjectStore.Data.Entities
         public List<SoldProduct> SoldProducts  { get; set; }
         public double Cost { get; set; }
         public DateTime Date { get; set; }
+        public string Status { get; set; }
 
         public Invoice()
         {
