@@ -12,7 +12,7 @@ namespace FinalProjectStore.Services
 {
     public class MenuService
     {
-       static MarketMenu market = new();
+        static MarketMenu market = new();
 
 
 
@@ -32,17 +32,17 @@ namespace FinalProjectStore.Services
 
         public static void DisplayProductsByCategory()
         {
-            var table = new ConsoleTable("Name","Code", "Category", "Price", "Quantity");
+            var table = new ConsoleTable("Name", "Code", "Category", "Price", "Quantity");
             var input = Console.ReadLine();
             foreach (var item in market.SearchByCategory(input))
             {
                 table.AddRow(item.Name, item.Code, item.Category, item.Price, item.Quantity);
             }
-            
+
             table.Write();
             Console.WriteLine();
 
-                     
+
         }
         public static void DisplayProductByPrice()
         {
@@ -62,11 +62,11 @@ namespace FinalProjectStore.Services
             var name = Console.ReadLine();
             foreach (var item in market.SearchByName(name))
             {
-                table.AddRow( item.Name, item.Code, item.Category, item.Price, item.Quantity);
+                table.AddRow(item.Name, item.Code, item.Category, item.Price, item.Quantity);
             }
             table.Write();
             Console.WriteLine();
-            
+
         }
 
         public static void DisplayInvoices()
@@ -78,7 +78,7 @@ namespace FinalProjectStore.Services
 
             }
             table.Write();
-            
+
             Console.WriteLine();
         }
         public static void DisplayInvoicesByDate()
@@ -96,12 +96,12 @@ namespace FinalProjectStore.Services
 
         public static void DisplayInvoiceByCost()
         {
-            var table = new ConsoleTable("Number", "Cost",  "Date");
+            var table = new ConsoleTable("Number", "Cost", "Date");
             double startcost = double.Parse(Console.ReadLine());
             double endcost = double.Parse(Console.ReadLine());
             foreach (var item in market.SearchInvoiceByPrice(startcost, endcost))
             {
-                table.AddRow(item.Number, item.Cost, item.Date );
+                table.AddRow(item.Number, item.Cost, item.Date);
             }
             var table1 = new ConsoleTable("Quantity");
             foreach (var item in market.Invoices)
@@ -115,12 +115,12 @@ namespace FinalProjectStore.Services
 
         public static void DisplayInvoiceByNo()
         {
-            var table = new ConsoleTable("Number", "Cost",  "Date");
+            var table = new ConsoleTable("Number", "Cost", "Date");
             int no = int.Parse(Console.ReadLine());
             foreach (var item in market.SearchByNumber(no))
             {
                 table.AddRow(item.Number, item.Cost, item.Date);
-                
+
             }
             var table1 = new ConsoleTable("Name", "Price", "Quantity");
             foreach (var invoice in market.Invoices)
@@ -138,7 +138,7 @@ namespace FinalProjectStore.Services
         {
             var table = new ConsoleTable("Number", "Cost", "Quantity", "Date");
             DateTime date = DateTime.Parse(Console.ReadLine());
-            
+
             foreach (var item in market.SearchByOnlyDate(date))
             {
                 table.AddRow(item.Number, item.Cost, item.SoldProducts.Count, item.Date);
@@ -155,6 +155,8 @@ namespace FinalProjectStore.Services
             double price = double.Parse(Console.ReadLine());
             Console.WriteLine("Enter the category of the product, please");
             string category = Console.ReadLine();
+            if (category != Category.Baby.ToString() && category != Category.Bakery.ToString() && category != Category.Beverages.ToString() && category != Category.Canned.ToString() && category != Category.Baby.ToString())
+                throw new KeyNotFoundException();
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
             market.AddProduct(name, price, category, quantity);
@@ -170,8 +172,10 @@ namespace FinalProjectStore.Services
             double price = double.Parse(Console.ReadLine());
             Console.WriteLine("Enter the new quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
-            Console.WriteLine("Enter the new quantity of the product, please");
+            Console.WriteLine("Enter the new category of the product, please");
             string category = Console.ReadLine();
+            if (category != Category.Baby.ToString() && category != Category.Bakery.ToString() && category != Category.Beverages.ToString() && category != Category.Canned.ToString() && category != Category.Baby.ToString())
+                throw new KeyNotFoundException();
             market.ChangeProductByCode(code, name, price, quantity, category);
             Console.WriteLine("Product changed");
         }
