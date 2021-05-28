@@ -185,7 +185,7 @@ namespace FinalProjectStore.Services
             }
             Console.WriteLine("Enter the name of the product's category, please");
             string category = Console.ReadLine();
-            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Baby.ToString().ToLower())
+            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower()&& category.ToLower() != Category.Tabacco.ToString().ToLower())
                 throw new KeyNotFoundException();
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
@@ -213,7 +213,7 @@ namespace FinalProjectStore.Services
             int quantity = int.Parse(Console.ReadLine());
             Console.WriteLine("Enter the new category of the product, please");
             string category = Console.ReadLine();
-            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Baby.ToString().ToLower())
+            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Tabacco.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower())
                 throw new KeyNotFoundException();
             var values = Enum.GetValues(typeof(Category));
             foreach (var item in values)
