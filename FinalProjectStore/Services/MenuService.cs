@@ -139,12 +139,11 @@ namespace FinalProjectStore.Services
 
             }
             var table1 = new ConsoleTable("Name", "Price", "Quantity");
-            foreach (var invoice in market.Invoices)
-            {
-                foreach (var soldProduct in invoice.SoldProducts.ToList())
-                {
-                    table1.AddRow(soldProduct.Product.Name, soldProduct.Product.Price.ToString("#.00"), soldProduct.quantity);
-                }
+            var index = market.Invoices.FindIndex(s=>s.Number == no);
+            var res = market.Invoices.ElementAt(index);
+            foreach (var invoice in res.SoldProducts)
+            {              
+                    table1.AddRow(invoice.Product.Name, invoice.Product.Price.ToString("#.00"), invoice.quantity);      
             }
             table.Write();
             table1.Write();
@@ -177,7 +176,14 @@ namespace FinalProjectStore.Services
             string name = Console.ReadLine();
             Console.WriteLine("Enter the price of the product, please");
             double price = double.Parse(Console.ReadLine());
-            Console.WriteLine("Enter the category of the product, please");
+            
+            Console.WriteLine("=============Existing categories are below:==============");
+            var categories = Enum.GetValues(typeof(Category));
+            foreach (var item in categories)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine("Enter the name of the product's category, please");
             string category = Console.ReadLine();
             if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Baby.ToString().ToLower())
                 throw new KeyNotFoundException();
@@ -252,7 +258,7 @@ namespace FinalProjectStore.Services
             try
             {
                 market.AddInvoice(code, quantity);
-                Console.WriteLine("Invoice added");
+                
             }
             catch (Exception e)
             {
@@ -263,15 +269,16 @@ namespace FinalProjectStore.Services
         }
         public static void AddReturnProductMenu()
         {
+            Console.WriteLine("Enter the number of the invoice, please");
             int number = int.Parse(Console.ReadLine());
-            Console.WriteLine("Enter the code of the product, please");
+            Console.WriteLine("Enter the name of the product, please");
             string name = Console.ReadLine();
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity = int.Parse(Console.ReadLine());
             try
             {
                 market.ReturnProduct(number, name, quantity);
-                Console.WriteLine("Product/products returned");
+                
             }
             catch (Exception e)
             {

@@ -118,15 +118,14 @@ namespace FinalProjectStore.Services
             Product product = Products.FirstOrDefault(s => s.Code == code);
             if (product == null)
                 throw new KeyNotFoundException();
-            SoldProduct sold = new(product);           
+            SoldProduct sold = new(product);
+            sold.quantity = quantity;
             product.Quantity = product.Quantity - quantity;
             invoice.Cost += product.Price * quantity;
-            sold.quantity += quantity;
-            invoice.SoldProducts.Add(sold);
-            invoice.Status = "Exists";
             
-
-
+            invoice.SoldProducts.Add(sold);
+            
+            
             do
             {
                 Console.WriteLine("Do you want to buy another item?");
@@ -142,19 +141,23 @@ namespace FinalProjectStore.Services
                 switch (option)
                 {
                     case 1:
-                        code = int.Parse(Console.ReadLine());
-                        if (code <= 0)
+                        Console.WriteLine("Enter the code of the product, please");
+                        int code1 = int.Parse(Console.ReadLine());
+                        if (code1 <= 0)
                             throw new ArgumentOutOfRangeException("Product code");
-                        quantity = int.Parse(Console.ReadLine());
-                        if (quantity <= 0)
+                        Console.WriteLine("Enter the quantity of the product, please");
+                        int quantity1 = int.Parse(Console.ReadLine());
+                        if (quantity1 <= 0)
                             throw new ArgumentOutOfRangeException("Product quantity");
-                        product = Products.FirstOrDefault(s => s.Code == code);
-                        if (product == null)
+                        Product product1 = Products.FirstOrDefault(s => s.Code == code1);
+                        if (product1 == null)
                             throw new KeyNotFoundException();
-                        sold = new(product);
-                        product.Quantity = product.Quantity - quantity;
-                        invoice.Cost += product.Price * quantity;
-                        invoice.SoldProducts.Add(sold);                        
+                        SoldProduct sold1 = new(product1);
+                        sold1 = new(product1);
+                        sold1.quantity = quantity1;
+                        product1.Quantity = product1.Quantity - quantity1;
+                        invoice.Cost += product1.Price * quantity1;
+                        invoice.SoldProducts.Add(sold1);                        
                         break;
                     case 2:
                         Console.WriteLine("Invoice added");
@@ -168,6 +171,7 @@ namespace FinalProjectStore.Services
         }
         public void ReturnProduct(int number, string name, int quantity)
         {
+            int option = 0;
             if (number <= 0)
                 throw new ArgumentOutOfRangeException("Invoice number");
             if (string.IsNullOrEmpty(name))
@@ -180,21 +184,68 @@ namespace FinalProjectStore.Services
             Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == number);
             if (invoice == null)
                 throw new KeyNotFoundException();
-            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.quantity >= quantity);
+            
+            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name == name && s.quantity >= quantity);
+            //sold = invoice.SoldProducts.FirstOrDefault(s => );
             if (sold == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException();         
 
-            Invoices.Remove(invoice);
-            invoice.SoldProducts.Remove(sold);
+            //invoice.SoldProducts.Remove(sold);
+            
             product.Quantity = product.Quantity + quantity;
             invoice.Cost -= product.Price * quantity;
-            sold.quantity -= quantity;
-            Invoices.Add(invoice);
-            invoice.SoldProducts.Add(sold);
-            
+            sold.quantity = sold.quantity - quantity;
+            //if (invoice.Cost == 0)
+            //invoice.Status = "Deleted";
+            //invoice.SoldProducts.Add(sold);
+            do
+            {
+                Console.WriteLine("Do you want to return another item?");
+                Console.WriteLine("1.Yes");
+                Console.WriteLine("2.No");
+                Console.WriteLine("Select an option, please");
+                string optionstr = Console.ReadLine();
+                while (!int.TryParse(optionstr, out option))
+                {
+                    Console.WriteLine("Enter a number, please");
+                    optionstr = Console.ReadLine();
+                }
+                switch (option)
+                {
+                    case 1:
+                       
+                        Console.WriteLine("Enter the name of the product, please");
+                        string name1 = Console.ReadLine();
+                        if (string.IsNullOrEmpty(name1))
+                            throw new ArgumentNullException("Product name");
+                        Console.WriteLine("Enter the quantity of the product, please");
+                        int quantity1 = int.Parse(Console.ReadLine());
+                        if (quantity1 <= 0)
+                            throw new ArgumentOutOfRangeException("Product quantity");
+                        Product product1 = Products.FirstOrDefault(s => s.Name == name1);
+                        if (product1 == null)
+                            throw new KeyNotFoundException();
+                        
 
-            
-            
+                        SoldProduct sold1 = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name == name1 && s.quantity >= quantity1);
+                        //sold1 = invoice.SoldProducts.FirstOrDefault(s => );
+
+                        if (sold1 == null)
+                            throw new KeyNotFoundException();
+
+                        //invoice.SoldProducts.Remove(sold);
+                        product1.Quantity = product1.Quantity + quantity1;
+                        invoice.Cost -= product1.Price * quantity1;
+                        sold1.quantity = sold1.quantity - quantity1;
+                        break;
+                    case 2:
+                        Console.WriteLine("Product/products returned");
+                        //invoice.SoldProducts.Add(sold);
+                        if (invoice.Cost == 0)
+                            invoice.Status = "Deleted";
+                        break;
+                }
+            } while (option != 2);
 
         }
         public List<Invoice> ReturnInvoices()

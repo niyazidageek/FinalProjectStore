@@ -17,6 +17,7 @@ namespace FinalProjectStore.Data.Entities
 
         public Invoice()
         {
+            Status = "Exists";
             SoldProducts = new();
             Count++;
             Number = Count;
