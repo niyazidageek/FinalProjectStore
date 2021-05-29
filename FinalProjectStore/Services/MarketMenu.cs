@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinalProjectStore.Services
 {
+    
     public class MarketMenu : IMarketable
     {
         public List<Product> Products { get; set; }
@@ -22,6 +23,9 @@ namespace FinalProjectStore.Services
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("Product name");
+            int checkname = Products.FindIndex(s=> s.Name.ToLower() == name);
+            if (checkname == 0)
+                throw new Exception("This product already exists");
             if (price <= 0)
                 throw new ArgumentOutOfRangeException("Product price");
             if (string.IsNullOrEmpty(category))
@@ -35,7 +39,7 @@ namespace FinalProjectStore.Services
             product.Name = name; //.First().ToString().ToUpper() + name.Substring(1);
             product.Price = price;           
             product.Quantity = quantity;
-            product.Category = category;
+            product.Category = category.ToLower();
             Products.Add(product);
 
         }
@@ -44,6 +48,8 @@ namespace FinalProjectStore.Services
             Product product = Products.Find(s => s.Code == code);
             if (product == null)
                 throw new KeyNotFoundException("There are no products with the given code");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("Product name");
             if (code <= 1000)
                 throw new ArgumentOutOfRangeException("Product code");
             if (price <= 0)
@@ -58,7 +64,7 @@ namespace FinalProjectStore.Services
             product.Name = name;
             product.Price = price;       
             product.Quantity = quantity;
-            product.Category = category;
+            product.Category = category.ToLower();
 
         }
         public void DeleteProductByCode(int code)
@@ -87,7 +93,7 @@ namespace FinalProjectStore.Services
                 throw new ArgumentNullException("Product category");
             if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Tabacco.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower())
                 throw new KeyNotFoundException("There is no such category");
-            var res = Products.FindAll(s => s.Category == category.ToLower());
+            var res = Products.FindAll(s => s.Category.ToLower() == category.ToLower());
             if (res == null)
                 throw new KeyNotFoundException("There is no product in the given category");
             return res.ToList();

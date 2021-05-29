@@ -345,6 +345,12 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Insert the quantity again");
                 quantitystr = Console.ReadLine();
             }
+            Console.WriteLine("=============Existing categories are below:==============");
+            var categories = Enum.GetValues(typeof(Category));
+            foreach (var item in categories)
+            {
+                Console.WriteLine(item);
+            }
             Console.WriteLine("Enter the new category of the product, please");
             string category = Console.ReadLine();
 
