@@ -35,7 +35,7 @@ namespace FinalProjectStore.Services
             product.Name = name; //.First().ToString().ToUpper() + name.Substring(1);
             product.Price = price;           
             product.Quantity = quantity;
-            product.Category = category.ToLower();
+            product.Category = category;
             Products.Add(product);
 
         }
@@ -58,7 +58,7 @@ namespace FinalProjectStore.Services
             product.Name = name;
             product.Price = price;       
             product.Quantity = quantity;
-            product.Category = category.ToLower();
+            product.Category = category;
 
         }
         public void DeleteProductByCode(int code)
@@ -96,7 +96,7 @@ namespace FinalProjectStore.Services
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("Product name");
-            var temp = Products.FindAll(s => s.Name == name);
+            var temp = Products.FindAll(s => s.Name.ToLower() == name);
             if (temp == null)
                 throw new KeyNotFoundException("There are no products with the given name");
             
@@ -189,13 +189,13 @@ namespace FinalProjectStore.Services
                 throw new ArgumentNullException("Product name");
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException("Product quantity");
-            Product product = Products.FirstOrDefault(s => s.Name == name);
+            Product product = Products.FirstOrDefault(s => s.Name.ToLower() == name);
             if (product == null)
                 throw new KeyNotFoundException("There are no products with the given name");
             Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == number);
             if (invoice == null)
                 throw new KeyNotFoundException("There are no invoices with the given number");           
-            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name == name && s.quantity >= quantity);
+            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name && s.quantity >= quantity);
             if (sold == null)
                 throw new KeyNotFoundException("There are no products in the given invoice");         
             
@@ -220,7 +220,7 @@ namespace FinalProjectStore.Services
                     case 1:
                        
                         Console.WriteLine("Enter the name of the product, please");
-                        string name1 = Console.ReadLine();
+                        string name1 = Console.ReadLine().ToLower();
                         if (string.IsNullOrEmpty(name1))
                             throw new ArgumentNullException("Product name");
                         Console.WriteLine("Enter the quantity of the product, please");
@@ -233,10 +233,10 @@ namespace FinalProjectStore.Services
                         }
                         if (quantity1 <= 0)
                             throw new ArgumentOutOfRangeException("Product quantity");
-                        Product product1 = Products.FirstOrDefault(s => s.Name == name1);
+                        Product product1 = Products.FirstOrDefault(s => s.Name.ToLower() == name1);
                         if (product1 == null)
                             throw new KeyNotFoundException("Thre are no products with the given name");
-                        SoldProduct sold1 = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name == name1 && s.quantity >= quantity1);
+                        SoldProduct sold1 = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name1 && s.quantity >= quantity1);
                         if (sold1 == null)
                             throw new KeyNotFoundException("There are no products in the given invoice");
 
@@ -259,8 +259,7 @@ namespace FinalProjectStore.Services
         public List<Invoice> ReturnInvoices()
         {
             return Invoices.ToList();
-        }
-        
+        }       
         public void DeleteInvoice(int no)
         {
             if (no <= 0)

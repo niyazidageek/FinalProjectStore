@@ -23,7 +23,7 @@ namespace FinalProjectStore.Services
 
             foreach (var product in market.Products)
             {
-                table.AddRow(product.Code, product.Name, product.Category, product.Price.ToString("0.00"), product.Quantity);
+                table.AddRow(product.Code, product.Name.ToString().First().ToString().ToUpper() + product.Name.Substring(1), product.Category.ToString().First().ToString().ToUpper() + product.Category.Substring(1), product.Price.ToString("0.00"), product.Quantity);
             }
 
             table.Write();
@@ -39,7 +39,7 @@ namespace FinalProjectStore.Services
             {
                 foreach (var item in market.SearchByCategory(category))
                 {
-                    table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("0.00"), item.Quantity);
+                    table.AddRow(item.Name.ToString().First().ToString().ToUpper() + item.Name.Substring(1), item.Code, item.Category.ToString().First().ToString().ToUpper() + item.Category.Substring(1), item.Price.ToString("0.00"), item.Quantity);
                 }
 
                 table.Write();
@@ -78,7 +78,7 @@ namespace FinalProjectStore.Services
             {
                 foreach (var item in market.SearcProductByPrice(startprice, endprice))
                 {
-                    table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("0.00"), item.Quantity);
+                    table.AddRow(item.Name.ToString().First().ToString().ToUpper() + item.Name.Substring(1), item.Code, item.Category.ToString().First().ToString().ToUpper() + item.Category.Substring(1), item.Price.ToString("0.00"), item.Quantity);
                 }
                 table.Write();
                 Console.WriteLine();
@@ -93,12 +93,12 @@ namespace FinalProjectStore.Services
         {
             var table = new ConsoleTable("Names", "Code", "Category", "Price", "Quantity");
             Console.WriteLine("Insert the name of the product, please");
-            var name = Console.ReadLine();
+            var name = Console.ReadLine().ToLower();
             try
             {
                 foreach (var item in market.SearchByName(name))
                 {
-                    table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("0.00"), item.Quantity);
+                    table.AddRow(item.Name.ToString().First().ToString().ToUpper() + item.Name.Substring(1), item.Code, item.Category.ToString().First().ToString().ToUpper() + item.Category.Substring(1), item.Price.ToString("0.00"), item.Quantity);
                 }
                 table.Write();
                 Console.WriteLine();
@@ -230,7 +230,7 @@ namespace FinalProjectStore.Services
             {
                 foreach (var invoice in res.SoldProducts)
                 {
-                    table1.AddRow(invoice.Product.Name, invoice.Product.Price.ToString("0.00"), invoice.quantity);
+                    table1.AddRow(invoice.Product.Name.ToString().First().ToString().ToUpper() + invoice.Product.Name.Substring(1), invoice.Product.Price.ToString("0.00"), invoice.quantity);
                 }
                 table1.Write();
                 Console.WriteLine();
@@ -273,7 +273,7 @@ namespace FinalProjectStore.Services
         public static void AddProductMenu()
         {
             Console.WriteLine("Enter the name of the product, please");
-            string name = Console.ReadLine();
+            string name = Console.ReadLine().ToLower();
             Console.WriteLine("Enter the price of the product, please");
             double price;
             string pricestr = Console.ReadLine();
@@ -328,7 +328,7 @@ namespace FinalProjectStore.Services
                 codestr = Console.ReadLine();
             }
             Console.WriteLine("Enter the new name of the product, please");
-            string name = Console.ReadLine();
+            string name = Console.ReadLine().ToLower();
             Console.WriteLine("Enter the new price of the product, please");
             double price;
             string pricestr = Console.ReadLine();
@@ -439,7 +439,7 @@ namespace FinalProjectStore.Services
                 numberstr = Console.ReadLine();
             }
             Console.WriteLine("Enter the name of the product, please");
-            string name = Console.ReadLine();
+            string name = Console.ReadLine().ToLower();
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity;
             string quantitystr = Console.ReadLine();
