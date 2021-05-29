@@ -155,7 +155,7 @@ namespace FinalProjectStore.Services
                         Console.WriteLine("Enter the quantity of the product, please");
                         int quantity1;
                         string quantity1str = Console.ReadLine();
-                        while(int.TryParse(quantity1str, out quantity1))
+                        while(!int.TryParse(quantity1str, out quantity1))
                         {
                             Console.WriteLine("Insert the quantity again");
                             quantity1str = Console.ReadLine();
@@ -183,7 +183,7 @@ namespace FinalProjectStore.Services
         public void ReturnProduct(int number, string name, int quantity)
         {
             int option = 0;
-            if (number <= 1000)
+            if (number <= 0)
                 throw new ArgumentOutOfRangeException("Invoice number");
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("Product name");
@@ -246,8 +246,10 @@ namespace FinalProjectStore.Services
                         break;
                     case 2:                      
 
-                        if (invoice.Cost == 0)
+                        if (invoice.Cost == 0.00)
+                        {
                             invoice.Status = "Deleted";
+                        }                         
                         Console.WriteLine("Product/products returned");
                         break;
                 }

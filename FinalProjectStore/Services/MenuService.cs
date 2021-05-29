@@ -23,7 +23,7 @@ namespace FinalProjectStore.Services
 
             foreach (var product in market.Products)
             {
-                table.AddRow(product.Code, product.Name, product.Category, product.Price.ToString("#.00"), product.Quantity);
+                table.AddRow(product.Code, product.Name, product.Category, product.Price.ToString("0.00"), product.Quantity);
             }
 
             table.Write();
@@ -35,13 +35,22 @@ namespace FinalProjectStore.Services
             var table = new ConsoleTable("Name", "Code", "Category", "Price", "Quantity");
             Console.WriteLine("Insert the category, please");
             var category = Console.ReadLine();
-            foreach (var item in market.SearchByCategory(category))
+            try
             {
-                table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("#.00"), item.Quantity);
-            }
+                foreach (var item in market.SearchByCategory(category))
+                {
+                    table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("0.00"), item.Quantity);
+                }
 
-            table.Write();
-            Console.WriteLine();
+                table.Write();
+                Console.WriteLine();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Try again, please.");
+                Console.WriteLine(e.Message);
+            }
+            
 
 
         }
@@ -65,24 +74,40 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Insert the maximum price again");
                 endpricestr = Console.ReadLine();
             }
-            foreach (var item in market.SearcProductByPrice(startprice, endprice))
+            try
             {
-                table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("#.00"), item.Quantity);
+                foreach (var item in market.SearcProductByPrice(startprice, endprice))
+                {
+                    table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("0.00"), item.Quantity);
+                }
+                table.Write();
+                Console.WriteLine();
             }
-            table.Write();
-            Console.WriteLine();
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Please, try again.");
+                Console.WriteLine(e.Message);
+            }
         }
         public static void DisplayProductByName()
         {
             var table = new ConsoleTable("Names", "Code", "Category", "Price", "Quantity");
             Console.WriteLine("Insert the name of the product, please");
             var name = Console.ReadLine();
-            foreach (var item in market.SearchByName(name))
+            try
             {
-                table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("#.00"), item.Quantity);
+                foreach (var item in market.SearchByName(name))
+                {
+                    table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("0.00"), item.Quantity);
+                }
+                table.Write();
+                Console.WriteLine();
             }
-            table.Write();
-            Console.WriteLine();
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Please, try again");
+                Console.WriteLine(e.Message);
+            }
 
         }
 
@@ -91,7 +116,7 @@ namespace FinalProjectStore.Services
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Status");
             foreach (var item in market.ReturnInvoices())
             {
-                table.AddRow(item.Number, item.Cost.ToString("#.00"), item.SoldProducts.Count, item.Status);
+                table.AddRow(item.Number, item.Cost.ToString("0.00"), item.SoldProducts.Count, item.Status);
 
             }
             table.Write();
@@ -117,12 +142,20 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Date format is not correct. Insert the date again (mm.dd.yyyy)");
                 enddatestr = Console.ReadLine();
             }
-            foreach (var item in market.SearchByDate(startdate, enddate))
+            try
             {
-                table.AddRow(item.Number, item.Cost.ToString("#.00"), item.SoldProducts.Count, item.Date, item.Status);
+                foreach (var item in market.SearchByDate(startdate, enddate))
+                {
+                    table.AddRow(item.Number, item.Cost.ToString("0.00"), item.SoldProducts.Count, item.Date, item.Status);
+                }
+                table.Write();
+                Console.WriteLine();
             }
-            table.Write();
-            Console.WriteLine();
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Try again, please");
+                Console.WriteLine(e.Message);
+            }
         }
 
         public static void DisplayInvoiceByCost()
@@ -144,13 +177,21 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Insert the maximum cost again");
                 endcoststring = Console.ReadLine();
             }
-            foreach (var item in market.SearchInvoiceByPrice(startcost, endcost))
+            try
             {
-                table.AddRow(item.Number, item.Cost.ToString("#.00"), item.SoldProducts.Count, item.Date, item.Status);
+                foreach (var item in market.SearchInvoiceByPrice(startcost, endcost))
+                {
+                    table.AddRow(item.Number, item.Cost.ToString("0.00"), item.SoldProducts.Count, item.Date, item.Status);
+                }
+
+                table.Write();
+                Console.WriteLine();
             }
-            
-            table.Write();
-            Console.WriteLine();
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Please, try again");
+                Console.WriteLine(e.Message);
+            }
         }
 
         public static void DisplayInvoiceByNo()
@@ -169,21 +210,36 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Insert the number again");
                 nostr = Console.ReadLine();
             }
-            foreach (var item in market.SearchByNumber(no))
+            try
             {
-                table.AddRow(item.Number, item.Cost.ToString("#.00"), item.Date, item.Status);
-
+                foreach (var item in market.SearchByNumber(no))
+                {
+                    table.AddRow(item.Number, item.Cost.ToString("0.00"), item.Date, item.Status);
+                }
+                table.Write();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Please, try again");
+                Console.WriteLine(e.Message);
             }
             var table1 = new ConsoleTable("Name", "Price", "Quantity");
             var index = market.Invoices.FindIndex(s=>s.Number == no);
             var res = market.Invoices.ElementAt(index);
-            foreach (var invoice in res.SoldProducts)
-            {              
-                    table1.AddRow(invoice.Product.Name, invoice.Product.Price.ToString("#.00"), invoice.quantity);      
+            try
+            {
+                foreach (var invoice in res.SoldProducts)
+                {
+                    table1.AddRow(invoice.Product.Name, invoice.Product.Price.ToString("0.00"), invoice.quantity);
+                }
+                table1.Write();
+                Console.WriteLine();
             }
-            table.Write();
-            table1.Write();
-            Console.WriteLine();
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Please, try again");
+                Console.WriteLine(e.Message);
+            }
         }
         public static void DisplayInvoiceByOnlyDate()
         {
@@ -196,12 +252,20 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Date format is not correct. Insert the date again (mm.dd.yyyy)");
                 datestr = Console.ReadLine();
             }
-            foreach (var item in market.SearchByOnlyDate(date))
-            {
-                table.AddRow(item.Number, item.Cost.ToString("#.00"), item.SoldProducts.Count, item.Date, item.Status);
+            try
+            {                
+                foreach (var item in market.SearchByOnlyDate(date))
+                {
+                    table.AddRow(item.Number, item.Cost.ToString("0.00"), item.SoldProducts.Count, item.Date, item.Status);
+                }
+                table.Write();
+                Console.WriteLine();
             }
-            table.Write();
-            Console.WriteLine();
+            catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong. Try again, please");
+                Console.WriteLine(e.Message);
+            }
         }
         #endregion
 
@@ -342,7 +406,7 @@ namespace FinalProjectStore.Services
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity;
             string quantitystr = Console.ReadLine();
-            while (int.TryParse(quantitystr, out quantity))
+            while (!int.TryParse(quantitystr, out quantity))
             {
                 Console.WriteLine("Insert the quantity again");
                 quantitystr = Console.ReadLine();
@@ -379,7 +443,7 @@ namespace FinalProjectStore.Services
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity;
             string quantitystr = Console.ReadLine();
-            while (int.TryParse(quantitystr, out quantity))
+            while (!int.TryParse(quantitystr, out quantity))
             {
                 Console.WriteLine("Insert the quantity again");
                 quantitystr = Console.ReadLine();
