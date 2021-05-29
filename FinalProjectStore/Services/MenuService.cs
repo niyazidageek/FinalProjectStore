@@ -49,9 +49,22 @@ namespace FinalProjectStore.Services
         {
             var table = new ConsoleTable("Name", "Code", "Category", "Price", "Quantity");
             Console.WriteLine("Insert the minimum price of the product, please");
-            var startprice = double.Parse(Console.ReadLine());
+            double startprice;
+            string startpricestr = Console.ReadLine();
+            while (!double.TryParse(startpricestr, out startprice))
+            {
+                Console.WriteLine("Insert the minimum price again");
+                startpricestr = Console.ReadLine();
+            }
+
             Console.WriteLine("Insert the maximum price of the product, please");
-            var endprice = double.Parse(Console.ReadLine());
+            double endprice;
+            string endpricestr = Console.ReadLine();
+            while (!double.TryParse(endpricestr, out endprice))
+            {
+                Console.WriteLine("Insert the maximum price again");
+                endpricestr = Console.ReadLine();
+            }
             foreach (var item in market.SearcProductByPrice(startprice, endprice))
             {
                 table.AddRow(item.Name, item.Code, item.Category, item.Price.ToString("#.00"), item.Quantity);
@@ -116,9 +129,21 @@ namespace FinalProjectStore.Services
         {
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Date", "Status");
             Console.WriteLine("Insert the minimum cost, please");
-            double startcost = double.Parse(Console.ReadLine());
+            double startcost;
+            string startcoststr = Console.ReadLine();
+            while(!double.TryParse(startcoststr, out startcost))
+            {
+                Console.WriteLine("Insert the minimum cost again");
+                startcoststr = Console.ReadLine();
+            }
             Console.WriteLine("Insert the maximum cost, please");
-            double endcost = double.Parse(Console.ReadLine());
+            double endcost;
+            string endcoststring = Console.ReadLine();
+            while(!double.TryParse(endcoststring, out endcost))
+            {
+                Console.WriteLine("Insert the maximum cost again");
+                endcoststring = Console.ReadLine();
+            }
             foreach (var item in market.SearchInvoiceByPrice(startcost, endcost))
             {
                 table.AddRow(item.Number, item.Cost.ToString("#.00"), item.SoldProducts.Count, item.Date, item.Status);
@@ -131,8 +156,19 @@ namespace FinalProjectStore.Services
         public static void DisplayInvoiceByNo()
         {
             var table = new ConsoleTable("Number", "Cost", "Date", "Status");
+            Console.WriteLine("Existing invoice numbers are shown below:");
+            foreach (var item in market.Invoices)
+            {
+                Console.WriteLine($"number - {item.Number}");
+            }
             Console.WriteLine("Insert the number of the invoice, please");
-            int no = int.Parse(Console.ReadLine());
+            int no;
+            string nostr = Console.ReadLine();
+            while(!int.TryParse(nostr, out no))
+            {
+                Console.WriteLine("Insert the number again");
+                nostr = Console.ReadLine();
+            }
             foreach (var item in market.SearchByNumber(no))
             {
                 table.AddRow(item.Number, item.Cost.ToString("#.00"), item.Date, item.Status);
@@ -175,7 +211,13 @@ namespace FinalProjectStore.Services
             Console.WriteLine("Enter the name of the product, please");
             string name = Console.ReadLine();
             Console.WriteLine("Enter the price of the product, please");
-            double price = double.Parse(Console.ReadLine());
+            double price;
+            string pricestr = Console.ReadLine();
+            while(!double.TryParse(pricestr, out price))
+            {
+                Console.WriteLine("Please, insert the price again");
+                pricestr = Console.ReadLine();
+            }
             
             Console.WriteLine("=============Existing categories are below:==============");
             var categories = Enum.GetValues(typeof(Category));
@@ -185,10 +227,15 @@ namespace FinalProjectStore.Services
             }
             Console.WriteLine("Enter the name of the product's category, please");
             string category = Console.ReadLine();
-            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower()&& category.ToLower() != Category.Tabacco.ToString().ToLower())
-                throw new KeyNotFoundException();
+
             Console.WriteLine("Enter the quantity of the product, please");
-            int quantity = int.Parse(Console.ReadLine());
+            int quantity;
+            string quantitystr = Console.ReadLine();
+            while(!int.TryParse(quantitystr, out quantity))
+            {
+                Console.WriteLine("Please, insert the quantity again");
+                quantitystr = Console.ReadLine();
+            }
             try
             {
                 market.AddProduct(name, price, category, quantity);
@@ -203,24 +250,40 @@ namespace FinalProjectStore.Services
         }
         public static void AddChangeProductMenu()
         {
+            Console.WriteLine("Existing product codes are shown below:");
+            foreach (var item in market.Products)
+            {
+                Console.WriteLine($"code - {item.Code} ({item.Name})");
+            }
             Console.WriteLine("Enter the code of the product, please");
-            int code = int.Parse(Console.ReadLine());
+            int code;
+            string codestr = Console.ReadLine();
+            while(!int.TryParse(codestr, out code))
+            {
+                Console.WriteLine("Insert the code again");
+                codestr = Console.ReadLine();
+            }
             Console.WriteLine("Enter the new name of the product, please");
             string name = Console.ReadLine();
             Console.WriteLine("Enter the new price of the product, please");
-            double price = double.Parse(Console.ReadLine());
+            double price;
+            string pricestr = Console.ReadLine();
+            while(!double.TryParse(pricestr, out price))
+            {
+                Console.WriteLine("Insert the price again");
+                pricestr = Console.ReadLine();
+            }
             Console.WriteLine("Enter the new quantity of the product, please");
-            int quantity = int.Parse(Console.ReadLine());
+            int quantity;
+            string quantitystr = Console.ReadLine();
+            while(!int.TryParse(quantitystr, out quantity))
+            {
+                Console.WriteLine("Insert the quantity again");
+                quantitystr = Console.ReadLine();
+            }
             Console.WriteLine("Enter the new category of the product, please");
             string category = Console.ReadLine();
-            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Tabacco.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower())
-                throw new KeyNotFoundException();
-            var values = Enum.GetValues(typeof(Category));
-            foreach (var item in values)
-            {
-                if (item.ToString().ToLower() != category.ToLower())
-                    throw new KeyNotFoundException();
-            }
+
             try
             {
                 market.ChangeProductByCode(code, name, price, quantity, category);
@@ -235,8 +298,20 @@ namespace FinalProjectStore.Services
         }
         public static void AddRemoveProductMenu()
         {
+            Console.WriteLine("Existing product codes are shown below:");
+            foreach (var item in market.Products)
+            {
+                Console.WriteLine($"code - {item.Code} ({item.Name})");
+            }
             Console.WriteLine("Enter the code of the product, please");
-            int code = int.Parse(Console.ReadLine());
+            int code;
+            string codestr = Console.ReadLine();
+            while (!int.TryParse(codestr, out code))
+            {
+                Console.WriteLine("Insert the code again");
+                codestr = Console.ReadLine();
+            }
+
             try
             {
                 market.DeleteProductByCode(code);
@@ -251,10 +326,27 @@ namespace FinalProjectStore.Services
         }
         public static void AddInvoiceMenu()
         {
+            Console.WriteLine("Existing product codes are shown below:");
+            foreach (var item in market.Products)
+            {
+                Console.WriteLine($"code - {item.Code} ({item.Name})");
+            }
             Console.WriteLine("Enter the code of the product, please");
-            int code = int.Parse(Console.ReadLine());
+            int code;
+            string codestr = Console.ReadLine();
+            while (!int.TryParse(codestr, out code))
+            {
+                Console.WriteLine("Insert the code again");
+                codestr = Console.ReadLine();
+            }
             Console.WriteLine("Enter the quantity of the product, please");
-            int quantity = int.Parse(Console.ReadLine());
+            int quantity;
+            string quantitystr = Console.ReadLine();
+            while (int.TryParse(quantitystr, out quantity))
+            {
+                Console.WriteLine("Insert the quantity again");
+                quantitystr = Console.ReadLine();
+            }
             try
             {
                 market.AddInvoice(code, quantity);
@@ -269,12 +361,29 @@ namespace FinalProjectStore.Services
         }
         public static void AddReturnProductMenu()
         {
+            Console.WriteLine("Existing invoice numbers are shown below:");
+            foreach (var item in market.Invoices)
+            {
+                Console.WriteLine($"number - {item.Number}");
+            }
             Console.WriteLine("Enter the number of the invoice, please");
-            int number = int.Parse(Console.ReadLine());
+            int number;
+            string numberstr = Console.ReadLine();
+            while (!int.TryParse(numberstr, out number))
+            {
+                Console.WriteLine("Insert the number again");
+                numberstr = Console.ReadLine();
+            }
             Console.WriteLine("Enter the name of the product, please");
             string name = Console.ReadLine();
             Console.WriteLine("Enter the quantity of the product, please");
-            int quantity = int.Parse(Console.ReadLine());
+            int quantity;
+            string quantitystr = Console.ReadLine();
+            while (int.TryParse(quantitystr, out quantity))
+            {
+                Console.WriteLine("Insert the quantity again");
+                quantitystr = Console.ReadLine();
+            }
             try
             {
                 market.ReturnProduct(number, name, quantity);
@@ -289,11 +398,22 @@ namespace FinalProjectStore.Services
         }
         public static void AddDeleteInvoiceMenu()
         {
+            Console.WriteLine("Existing invoice numbers are shown below:");
+            foreach (var item in market.Invoices)
+            {
+                Console.WriteLine($"number - {item.Number}");
+            }
             Console.WriteLine("Enter the number of the invoice, please");
-            int no = int.Parse(Console.ReadLine());
+            int number;
+            string numberstr = Console.ReadLine();
+            while (!int.TryParse(numberstr, out number))
+            {
+                Console.WriteLine("Insert the number again");
+                numberstr = Console.ReadLine();
+            }
             try
             {
-                market.DeleteInvoice(no);
+                market.DeleteInvoice(number);
                 Console.WriteLine("Invoice deleted");
             }
             catch (Exception e)

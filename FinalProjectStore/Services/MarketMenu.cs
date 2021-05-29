@@ -9,17 +9,12 @@ namespace FinalProjectStore.Services
 {
     public class MarketMenu : IMarketable
     {
-        
-
         public List<Product> Products { get; set; }
         public List<Invoice> Invoices { get; set; }
-
-
         public MarketMenu()
         {
             Products = new();
-            Invoices = new();
-            
+            Invoices = new();   
         }
 
         #region Product
@@ -31,6 +26,8 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Product price");
             if (string.IsNullOrEmpty(category))
                 throw new ArgumentNullException("Product category");
+            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower() && category.ToLower() != Category.Tabacco.ToString().ToLower())
+                throw new KeyNotFoundException("There is no such category");
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException("Product quantity");
                  
@@ -44,10 +41,10 @@ namespace FinalProjectStore.Services
         }
         public void ChangeProductByCode(int code, string name, double price, int quantity, string category)
         {
-            var index = Products.FindIndex(s => s.Code == code);
-            if (index == -1)
-                throw new KeyNotFoundException();
-            if (code <= 0)
+            Product product = Products.Find(s => s.Code == code);
+            if (product == null)
+                throw new KeyNotFoundException("There are no products with the given code");
+            if (code <= 1000)
                 throw new ArgumentOutOfRangeException("Product code");
             if (price <= 0)
                 throw new ArgumentOutOfRangeException("Product price");
@@ -55,22 +52,23 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Product quantity");
             if (string.IsNullOrEmpty(category))
                 throw new ArgumentNullException("Product category");
-            Products.RemoveAt(index);
-            Product product = new();
+            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Tabacco.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower())
+                throw new KeyNotFoundException("There is no such category");
+
             product.Name = name;
             product.Price = price;       
             product.Quantity = quantity;
             product.Category = category.ToLower();
-            Products.Add(product);
 
         }
         public void DeleteProductByCode(int code)
         {
-            var index = Products.FindIndex(s => s.Code == code);
-            if (index == -1)
-                throw new KeyNotFoundException();
-            Products.RemoveAt(index);
-
+            if (code <= 1000)
+                throw new ArgumentOutOfRangeException("Product code");
+            Product product = Products.Find(s => s.Code == code);
+            if (product == null)
+                throw new KeyNotFoundException("There are no products with the given code");
+            Products.Remove(product);
         }
         public List<Product> SearcProductByPrice(double startprice, double endprice)
         {
@@ -80,27 +78,27 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Product end price");
             var res = Products.FindAll(s => s.Price >= startprice && s.Price <= endprice);
             if (res == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There is no product within the given price range");
             return res.ToList();
         }
         public List<Product> SearchByCategory(string category)
         {
-
             if (string.IsNullOrEmpty(category))
                 throw new ArgumentNullException("Product category");
+            if (category.ToLower() != Category.Baby.ToString().ToLower() && category.ToLower() != Category.Bakery.ToString().ToLower() && category.ToLower() != Category.Beverages.ToString().ToLower() && category.ToLower() != Category.Canned.ToString().ToLower() && category.ToLower() != Category.Tabacco.ToString().ToLower() && category.ToLower() != Category.Laundry.ToString().ToLower())
+                throw new KeyNotFoundException("There is no such category");
             var res = Products.FindAll(s => s.Category == category.ToLower());
             if (res == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There is no product in the given category");
             return res.ToList();
-
         }
         public List<Product> SearchByName(string name)
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("Product  name");
+                throw new ArgumentNullException("Product name");
             var temp = Products.FindAll(s => s.Name == name);
             if (temp == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There are no products with the given name");
             
             return temp.ToList();
         }
@@ -109,7 +107,7 @@ namespace FinalProjectStore.Services
         #region Invoice
         public void AddInvoice(int code, int quantity)
         {
-            if (code <= 0)
+            if (code <= 1000)
                 throw new ArgumentOutOfRangeException("Product code");
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException("Product quantity");
@@ -117,14 +115,12 @@ namespace FinalProjectStore.Services
             Invoice invoice = new();
             Product product = Products.FirstOrDefault(s => s.Code == code);
             if (product == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There are no products with the given code");
             SoldProduct sold = new(product);
             sold.quantity = quantity;
             product.Quantity = product.Quantity - quantity;
-            invoice.Cost += product.Price * quantity;
-            
+            invoice.Cost += product.Price * quantity;   
             invoice.SoldProducts.Add(sold);
-            
             
             do
             {
@@ -141,17 +137,34 @@ namespace FinalProjectStore.Services
                 switch (option)
                 {
                     case 1:
+                        Console.WriteLine("Existing product codes are shown below:");
+                        foreach (var item in Products)
+                        {
+                            Console.WriteLine($"code - {item.Code} ({item.Name})");
+                        }
                         Console.WriteLine("Enter the code of the product, please");
-                        int code1 = int.Parse(Console.ReadLine());
-                        if (code1 <= 0)
+                        int code1;
+                        string code1str = Console.ReadLine();
+                        while(!int.TryParse(code1str, out code1))
+                        {
+                            Console.WriteLine("Insert the code again");
+                            code1str = Console.ReadLine();
+                        }
+                        if (code1 <= 1000)
                             throw new ArgumentOutOfRangeException("Product code");
                         Console.WriteLine("Enter the quantity of the product, please");
-                        int quantity1 = int.Parse(Console.ReadLine());
+                        int quantity1;
+                        string quantity1str = Console.ReadLine();
+                        while(int.TryParse(quantity1str, out quantity1))
+                        {
+                            Console.WriteLine("Insert the quantity again");
+                            quantity1str = Console.ReadLine();
+                        }
                         if (quantity1 <= 0)
                             throw new ArgumentOutOfRangeException("Product quantity");
                         Product product1 = Products.FirstOrDefault(s => s.Code == code1);
                         if (product1 == null)
-                            throw new KeyNotFoundException();
+                            throw new KeyNotFoundException("There are no products with the given code");
                         SoldProduct sold1 = new(product1);
                         sold1 = new(product1);
                         sold1.quantity = quantity1;
@@ -165,14 +178,12 @@ namespace FinalProjectStore.Services
                         break;
                 }
             } while (option!=2);
-            
-
-           
+                      
         }
         public void ReturnProduct(int number, string name, int quantity)
         {
             int option = 0;
-            if (number <= 0)
+            if (number <= 1000)
                 throw new ArgumentOutOfRangeException("Invoice number");
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("Product name");
@@ -180,24 +191,18 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Product quantity");
             Product product = Products.FirstOrDefault(s => s.Name == name);
             if (product == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There are no products with the given name");
             Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == number);
             if (invoice == null)
-                throw new KeyNotFoundException();
-            
+                throw new KeyNotFoundException("There are no invoices with the given number");           
             SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name == name && s.quantity >= quantity);
-            //sold = invoice.SoldProducts.FirstOrDefault(s => );
             if (sold == null)
-                throw new KeyNotFoundException();         
-
-            //invoice.SoldProducts.Remove(sold);
+                throw new KeyNotFoundException("There are no products in the given invoice");         
             
             product.Quantity = product.Quantity + quantity;
             invoice.Cost -= product.Price * quantity;
             sold.quantity = sold.quantity - quantity;
-            //if (invoice.Cost == 0)
-            //invoice.Status = "Deleted";
-            //invoice.SoldProducts.Add(sold);
+         
             do
             {
                 Console.WriteLine("Do you want to return another item?");
@@ -219,30 +224,31 @@ namespace FinalProjectStore.Services
                         if (string.IsNullOrEmpty(name1))
                             throw new ArgumentNullException("Product name");
                         Console.WriteLine("Enter the quantity of the product, please");
-                        int quantity1 = int.Parse(Console.ReadLine());
+                        int quantity1;
+                        string quantity1str = Console.ReadLine();
+                        while(!int.TryParse(quantity1str, out quantity1))
+                        {
+                            Console.WriteLine("Insert the quantity again");
+                            quantity1str = Console.ReadLine();
+                        }
                         if (quantity1 <= 0)
                             throw new ArgumentOutOfRangeException("Product quantity");
                         Product product1 = Products.FirstOrDefault(s => s.Name == name1);
                         if (product1 == null)
-                            throw new KeyNotFoundException();
-                        
-
+                            throw new KeyNotFoundException("Thre are no products with the given name");
                         SoldProduct sold1 = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name == name1 && s.quantity >= quantity1);
-                        //sold1 = invoice.SoldProducts.FirstOrDefault(s => );
-
                         if (sold1 == null)
-                            throw new KeyNotFoundException();
+                            throw new KeyNotFoundException("There are no products in the given invoice");
 
-                        //invoice.SoldProducts.Remove(sold);
                         product1.Quantity = product1.Quantity + quantity1;
                         invoice.Cost -= product1.Price * quantity1;
                         sold1.quantity = sold1.quantity - quantity1;
                         break;
-                    case 2:
-                        Console.WriteLine("Product/products returned");
-                        //invoice.SoldProducts.Add(sold);
+                    case 2:                      
+
                         if (invoice.Cost == 0)
                             invoice.Status = "Deleted";
+                        Console.WriteLine("Product/products returned");
                         break;
                 }
             } while (option != 2);
@@ -260,10 +266,12 @@ namespace FinalProjectStore.Services
             
             Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == no);
             if (invoice == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There is no invoice with the given number");
 
             var res = invoice.SoldProducts.ToList();
-            //SoldProduct sold = new(product);
+            if (res == null)
+                throw new KeyNotFoundException("There are no products in the given invoice");
+  
             foreach (var item in res)
             {
                 item.Product.Quantity += item.quantity;
@@ -276,7 +284,7 @@ namespace FinalProjectStore.Services
             
             var result = Invoices.Where(m => m.Date>= startdate && m.Date <= enddate);
             if (result == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There were no invoices during the given date range");
             return result.ToList();
         }
         public List<Invoice> SearchInvoiceByPrice(double startcost, double endcost)
@@ -285,10 +293,10 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Invocie start cost");
             if (endcost <= 0)
                 throw new ArgumentOutOfRangeException("Invocie end cost");
-            var index = Invoices.FindAll(s => s.Cost >= startcost && s.Cost <= endcost);
-            if (index == null)
-                throw new KeyNotFoundException();
-            return index.ToList();
+            var result = Invoices.FindAll(s => s.Cost >= startcost && s.Cost <= endcost);
+            if (result == null)
+                throw new KeyNotFoundException("There are no invoices within the given cost range");
+            return result.ToList();
         }
         public List<Invoice> SearchByNumber(int no)
         {
@@ -296,14 +304,14 @@ namespace FinalProjectStore.Services
                 throw new ArgumentOutOfRangeException("Invoice number");
             var res = Invoices.FindAll(s => s.Number == no);
             if (res == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There are no invoices with the given number");
             return res;            
         }
         public List<Invoice> SearchByOnlyDate(DateTime date)
         {
             var res = Invoices.Where(s => s.Date.Day == date.Day && s.Date.Month == date.Month && s.Date.Month == date.Month && s.Date.Year == date.Year);
             if (res == null)
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("There were no inoices on this day");
             return res.ToList();
         }
         #endregion
