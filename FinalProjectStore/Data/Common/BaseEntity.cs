@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace FinalProjectStore.Data.Common
 {
+    //Ashaghda BaseEntity class-i teqdim olunub. BaseEntity class-i bize muxtelif class-larda eyno property-lari istifade etmek shansini yaradir.
     public abstract class BaseEntity
     {
         public int Number { get; set; }

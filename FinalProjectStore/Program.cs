@@ -1,7 +1,6 @@
 ﻿using FinalProjectStore.Services;
-using FinalProjectStore.Data;
 using System;
-using FinalProjectStore.Data.Entities;
+
 namespace FinalProjectStore
 {
     class Program
@@ -29,7 +28,6 @@ namespace FinalProjectStore
                     case 1:
                         do
                         {
-
                             Console.WriteLine("1. Add product");
                             Console.WriteLine("2. Edit product");
                             Console.WriteLine("3. Delete product");
@@ -140,8 +138,6 @@ namespace FinalProjectStore
                         break;
                 }
             } while (selection != 0);
-            
-
         }
     }
 }

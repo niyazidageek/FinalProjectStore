@@ -1,13 +1,8 @@
 ﻿using FinalProjectStore.Data.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
 
 namespace FinalProjectStore.Data.Entities
 {
+    //Ashaghda "Satish  Item" class-i teqdim olunub. "Satish Item"-im yaranmasi uchun, satilan mehsuldan instans alinir.
     public class SoldProduct : BaseEntity
     {      
         private static int Count = 0;

@@ -1,20 +1,13 @@
 ﻿using ConsoleTables;
 using FinalProjectStore.Data.Entities;
 using System;
-using System.Data;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
 
 namespace FinalProjectStore.Services
 {
     public class MenuService
     {
         static MarketMenu market = new();
-
-
 
         #region Display
         public static void DisplayProducts()
@@ -29,10 +22,15 @@ namespace FinalProjectStore.Services
             table.Write();
             Console.WriteLine();
         }
-
         public static void DisplayProductsByCategory()
         {
             var table = new ConsoleTable("Name", "Code", "Category", "Price", "Quantity");
+            Console.WriteLine("=============Existing categories are below:==============");
+            var categories = Enum.GetValues(typeof(Category));
+            foreach (var item in categories)
+            {
+                Console.WriteLine(item);
+            }
             Console.WriteLine("Insert the category, please");
             var category = Console.ReadLine();
             try
@@ -76,7 +74,7 @@ namespace FinalProjectStore.Services
             }
             try
             {
-                foreach (var item in market.SearcProductByPrice(startprice, endprice))
+                foreach (var item in market.SearchProductByPrice(startprice, endprice))
                 {
                     table.AddRow(item.Name.ToString().First().ToString().ToUpper() + item.Name.Substring(1), item.Code, item.Category.ToString().First().ToString().ToUpper() + item.Category.Substring(1), item.Price.ToString("0.00"), item.Quantity);
                 }
@@ -110,7 +108,6 @@ namespace FinalProjectStore.Services
             }
 
         }
-
         public static void DisplayInvoices()
         {
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Status");
@@ -157,7 +154,6 @@ namespace FinalProjectStore.Services
                 Console.WriteLine(e.Message);
             }
         }
-
         public static void DisplayInvoiceByCost()
         {
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Date", "Status");
@@ -193,7 +189,6 @@ namespace FinalProjectStore.Services
                 Console.WriteLine(e.Message);
             }
         }
-
         public static void DisplayInvoiceByNo()
         {
             var table = new ConsoleTable("Number", "Cost", "Date", "Status");
@@ -223,14 +218,14 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Something went wrong. Please, try again");
                 Console.WriteLine(e.Message);
             }
-            var table1 = new ConsoleTable("Name", "Price", "Quantity");
+            var table1 = new ConsoleTable("Name", "Price", "Quantity", "Number");
             var res = market.Invoices.Find(s=>s.Number == no);
             
             try
             {
                 foreach (var invoice in res.SoldProducts)
                 {
-                    table1.AddRow(invoice.Product.Name.ToString().First().ToString().ToUpper() + invoice.Product.Name.Substring(1), invoice.Product.Price.ToString("0.00"), invoice.quantity);
+                    table1.AddRow(invoice.Product.Name.ToString().First().ToString().ToUpper() + invoice.Product.Name.Substring(1), invoice.Product.Price.ToString("0.00"), invoice.quantity, invoice.Number);
                 }
                 table1.Write();
                 Console.WriteLine();
@@ -303,7 +298,7 @@ namespace FinalProjectStore.Services
             try
             {
                 market.AddProduct(name, price, category, quantity);
-                Console.WriteLine("Product added");
+                Console.WriteLine("=============Product added==============");
             }
             catch (Exception e)
             {
@@ -314,7 +309,7 @@ namespace FinalProjectStore.Services
         }
         public static void AddChangeProductMenu()
         {
-            Console.WriteLine("Existing product codes are shown below:");
+            Console.WriteLine("==============Existing product codes are shown below:==============");
             foreach (var item in market.Products)
             {
                 Console.WriteLine($"code - {item.Code} ({item.Name})");
@@ -357,7 +352,7 @@ namespace FinalProjectStore.Services
             try
             {
                 market.ChangeProductByCode(code, name, price, quantity, category);
-                Console.WriteLine("Product changed");
+                Console.WriteLine("==============Product changed==============");
             }
             catch (Exception e)
             {
@@ -368,7 +363,7 @@ namespace FinalProjectStore.Services
         }
         public static void AddRemoveProductMenu()
         {
-            Console.WriteLine("Existing product codes are shown below:");
+            Console.WriteLine("==============Existing product codes are shown below:==============");
             foreach (var item in market.Products)
             {
                 Console.WriteLine($"code - {item.Code} ({item.Name})");
@@ -385,7 +380,7 @@ namespace FinalProjectStore.Services
             try
             {
                 market.DeleteProductByCode(code);
-                Console.WriteLine("Product deleted");
+                Console.WriteLine("==============Product deleted==============");
             }
             catch (Exception e)
             {
@@ -396,7 +391,7 @@ namespace FinalProjectStore.Services
         }
         public static void AddInvoiceMenu()
         {
-            Console.WriteLine("Existing product codes are shown below:");
+            Console.WriteLine("==============Existing product codes are shown below:==============");
             foreach (var item in market.Products)
             {
                 Console.WriteLine($"code - {item.Code} ({item.Name})");
@@ -431,7 +426,7 @@ namespace FinalProjectStore.Services
         }
         public static void AddReturnProductMenu()
         {
-            Console.WriteLine("Existing invoice numbers are shown below:");
+            Console.WriteLine("==============Existing invoice numbers are shown below:==============");
             foreach (var item in market.Invoices)
             {
                 Console.WriteLine($"number - {item.Number}");
@@ -457,6 +452,7 @@ namespace FinalProjectStore.Services
             try
             {
                 market.ReturnProduct(number, name, quantity);
+                Console.WriteLine("==============Product/products returned==============");
                 
             }
             catch (Exception e)
@@ -484,7 +480,7 @@ namespace FinalProjectStore.Services
             try
             {
                 market.DeleteInvoice(number);
-                Console.WriteLine("Invoice deleted");
+                Console.WriteLine("==============Invoice deleted==============");
             }
             catch (Exception e)
             {
