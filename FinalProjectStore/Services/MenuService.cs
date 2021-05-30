@@ -224,8 +224,8 @@ namespace FinalProjectStore.Services
                 Console.WriteLine(e.Message);
             }
             var table1 = new ConsoleTable("Name", "Price", "Quantity");
-            var index = market.Invoices.FindIndex(s=>s.Number == no);
-            var res = market.Invoices.ElementAt(index);
+            var res = market.Invoices.Find(s=>s.Number == no);
+            
             try
             {
                 foreach (var invoice in res.SoldProducts)

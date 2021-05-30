@@ -15,7 +15,7 @@ namespace FinalProjectStore.Data.Entities
         public DateTime Date { get; set; }
         public string Status { get; set; }
 
-        public Invoice()
+        public Invoice()   
         {
             Status = "Exists";
             SoldProducts = new();

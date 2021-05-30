@@ -118,10 +118,38 @@ namespace FinalProjectStore.Services
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException("Product quantity");
             int option = 0;
-            Invoice invoice = new();
             Product product = Products.FirstOrDefault(s => s.Code == code);
             if (product == null)
                 throw new KeyNotFoundException("There are no products with the given code");
+            while (product.Quantity == 0)
+            {
+                Console.WriteLine("The product is out of stock.");
+                Console.WriteLine("Existing product codes are shown below:");
+                foreach (var item in Products)
+                {
+                   Console.WriteLine($"code - {item.Code} ({item.Name})");
+                }
+
+                Console.WriteLine("Enter the code please");
+                 code = int.Parse(Console.ReadLine());
+                  if (code <= 1000)
+                 throw new ArgumentOutOfRangeException("Product code");
+                     Console.WriteLine("Enter the quantity please");
+                   quantity = int.Parse(Console.ReadLine());
+                   if (quantity <= 0)
+                       throw new ArgumentOutOfRangeException("Product quantity");
+                 product = Products.FirstOrDefault(s => s.Code == code);
+           
+            }
+            
+            while (quantity > product.Quantity)
+            {
+                Console.WriteLine($"The given quantity exceeds the real quantity of the product. The quantity of the product is: {product.Quantity}");
+                Console.WriteLine("Re-enter the quantity");
+                quantity = int.Parse(Console.ReadLine());
+            }
+                
+            Invoice invoice = new();
             SoldProduct sold = new(product);
             sold.quantity = quantity;
             product.Quantity = product.Quantity - quantity;
@@ -166,11 +194,40 @@ namespace FinalProjectStore.Services
                             Console.WriteLine("Insert the quantity again");
                             quantity1str = Console.ReadLine();
                         }
+                        
                         if (quantity1 <= 0)
                             throw new ArgumentOutOfRangeException("Product quantity");
                         Product product1 = Products.FirstOrDefault(s => s.Code == code1);
                         if (product1 == null)
                             throw new KeyNotFoundException("There are no products with the given code");
+                        while (product1.Quantity == 0)
+                        {
+                            Console.WriteLine("The product is out of stock.");
+
+                                  
+                            Console.WriteLine("Existing product codes are shown below:");
+                             foreach (var item in Products)
+                             {
+                                Console.WriteLine($"code - {item.Code} ({item.Name})");
+                             }
+                             Console.WriteLine("Enter the code please");
+                             code1 = int.Parse(Console.ReadLine());
+                             if (code1 <= 1000)
+                                 throw new ArgumentOutOfRangeException("Product code");
+                              Console.WriteLine("Enter the quantity please");
+                              quantity1 = int.Parse(Console.ReadLine());
+                              if (quantity1 <= 0)
+                                 throw new ArgumentOutOfRangeException("Product quantity");
+                             product1 = Products.FirstOrDefault(s => s.Code == code1);
+              
+                        }
+                        while (quantity1 > product1.Quantity)
+                        {
+                            Console.WriteLine($"The given quantity exceeds the real quantity of the product. The quantity of the product is: {product1.Quantity}");
+                            Console.WriteLine("Re-enter the quantity");
+                            quantity1 = int.Parse(Console.ReadLine());
+                        }
+
                         SoldProduct sold1 = new(product1);
                         sold1 = new(product1);
                         sold1.quantity = quantity1;
@@ -201,7 +258,16 @@ namespace FinalProjectStore.Services
             Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == number);
             if (invoice == null)
                 throw new KeyNotFoundException("There are no invoices with the given number");           
-            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name && s.quantity >= quantity);
+            SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name);
+            while (sold.quantity < quantity)
+            {
+                Console.WriteLine("You can not return more than you bought.");
+                Console.WriteLine("Enter the quantity, please");
+                quantity = int.Parse(Console.ReadLine());
+                if (quantity <= 0)
+                    throw new ArgumentOutOfRangeException("Product quantity");
+            }
+                
             if (sold == null)
                 throw new KeyNotFoundException("There are no products in the given invoice");         
             
@@ -242,9 +308,16 @@ namespace FinalProjectStore.Services
                         Product product1 = Products.FirstOrDefault(s => s.Name.ToLower() == name1);
                         if (product1 == null)
                             throw new KeyNotFoundException("Thre are no products with the given name");
-                        SoldProduct sold1 = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name1 && s.quantity >= quantity1);
+                        SoldProduct sold1 = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name1);
                         if (sold1 == null)
                             throw new KeyNotFoundException("There are no products in the given invoice");
+                        while (sold1.quantity < quantity1)
+                        {
+                            Console.WriteLine("You can not return more than you bought");
+                            Console.WriteLine("Enter the quantity again, please");
+                            quantity1 = int.Parse(Console.ReadLine());
+                        }
+                            
 
                         product1.Quantity = product1.Quantity + quantity1;
                         invoice.Cost -= product1.Price * quantity1;
