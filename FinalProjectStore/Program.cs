@@ -7,6 +7,7 @@ namespace FinalProjectStore
     {
         static void Main(string[] args)
         {
+            //Ashaghdaki qurulumush mexanizma console-in interface-ni ishledir.
             int selection = 0;
             int option = 0;
             int option2 = 0;
@@ -67,7 +68,7 @@ namespace FinalProjectStore
                                     MenuService.DisplayProductByName();
                                     break;
                                 case 0:
-                                    
+                                    Console.WriteLine("--------------------");
                                     break;
                                 default:
                                     Console.WriteLine("There is no such option");
@@ -122,7 +123,7 @@ namespace FinalProjectStore
                                     MenuService.DisplayInvoiceByNo();
                                     break;
                                 case 0:
-                                    
+                                    Console.WriteLine("--------------------");
                                     break;
                                 default:
                                     Console.WriteLine("There is no such option");

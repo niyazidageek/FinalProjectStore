@@ -14,6 +14,7 @@ namespace FinalProjectStore.Services
         public List<Product> SearchProductByPrice(double startprice, double endprice);
         public List<Product> SearchByCategory(string category);
         public List<Product> SearchByName(string name);
+        public List<Product> ReturnProducts();
         #endregion
 
         #region Invoice

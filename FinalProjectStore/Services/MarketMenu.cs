@@ -86,6 +86,10 @@ namespace FinalProjectStore.Services
                 throw new KeyNotFoundException("There are no products with the given code");
             Products.Remove(product);
         }
+        public List<Product> ReturnProducts()
+        {
+            return Products.ToList();
+        }
         public List<Product> SearchProductByPrice(double startprice, double endprice)
         {
             //Ashaghdaki kod, mehsullarin qiymet aralighina gore axtarir
@@ -117,8 +121,7 @@ namespace FinalProjectStore.Services
                 throw new ArgumentNullException("Product name");
             var temp = Products.FindAll(s => s.Name.ToLower() == name);
             if (temp == null)
-                throw new KeyNotFoundException("There are no products with the given name");
-            
+                throw new KeyNotFoundException("There are no products with the given name"); 
             return temp.ToList();
         }
         #endregion
@@ -126,14 +129,17 @@ namespace FinalProjectStore.Services
         #region Invoice
         public void AddInvoice(int code, int quantity)
         {
+            int option = 0;
             if (code <= 1000)
                 throw new ArgumentOutOfRangeException("Product code");
             if (quantity <= 0)
-                throw new ArgumentOutOfRangeException("Product quantity");
-            int option = 0;
+                throw new ArgumentOutOfRangeException("Product quantity");         
             Product product = Products.FirstOrDefault(s => s.Code == code);
             if (product == null)
                 throw new KeyNotFoundException("There are no products with the given code");
+            //
+            //Eger mehsulun sayi 0 olsa ve biz o mehsulu almaq istesek, kod bize xeberdarliq edecek. Onnan sonra bize yeniden kodlarin siyahini ve sechim etmek shansini verecek.
+            //
             while (product.Quantity == 0)
             {
                 Console.WriteLine("The product is out of stock.");
@@ -142,33 +148,37 @@ namespace FinalProjectStore.Services
                 {
                    Console.WriteLine($"code - {item.Code} ({item.Name})");
                 }
-
                 Console.WriteLine("Enter the code please");
-                 code = int.Parse(Console.ReadLine());
-                  if (code <= 1000)
-                 throw new ArgumentOutOfRangeException("Product code");
-                     Console.WriteLine("Enter the quantity please");
-                   quantity = int.Parse(Console.ReadLine());
-                   if (quantity <= 0)
-                       throw new ArgumentOutOfRangeException("Product quantity");
-                 product = Products.FirstOrDefault(s => s.Code == code);
-           
+                code = int.Parse(Console.ReadLine());
+                if (code <= 1000)
+                     throw new ArgumentOutOfRangeException("Product code");
+                Console.WriteLine("Enter the quantity please");
+                quantity = int.Parse(Console.ReadLine());
+                if (quantity <= 0)
+                     throw new ArgumentOutOfRangeException("Product quantity");
+                product = Products.FirstOrDefault(s => s.Code == code);          
             }
-            
+            //
+            //Eger biz verdiyimiz say mehsulun stokda sayinnan chox olarsa, kod bize xeberdarliq edib ve yeniden sayi daxil etmek uchun shans verecek.
+            //
             while (quantity > product.Quantity)
             {
                 Console.WriteLine($"The given quantity exceeds the real quantity of the product. The quantity of the product is: {product.Quantity}");
                 Console.WriteLine("Re-enter the quantity");
                 quantity = int.Parse(Console.ReadLine());
             }
-                
+            //
+            //Mehsul yoxlamalari kechdikden sonra, asahghda verildiyi kimi, satisha elave olunur
+            //  
             Invoice invoice = new();
             SoldProduct sold = new(product);
             sold.quantity = quantity;
-            product.Quantity = product.Quantity - quantity;
+            product.Quantity -= quantity;
             invoice.Cost += product.Price * quantity;   
             invoice.SoldProducts.Add(sold);
-            
+            //
+            //Ashaghdaki mexanizma bizim bashqa bir mehsulun satisha elave olunmasini sorushur. Sechim teqdim olunur(switch case), ve sechmelisiniz(1-yes,2-no)
+            //
             do
             {
                 Console.WriteLine("Do you want to buy another item?");
@@ -184,34 +194,37 @@ namespace FinalProjectStore.Services
                 switch (option)
                 {
                     case 1:
+                        //
+                        //Bu case-da satisha bashqa bir mehsul elave olunur. Yuxardaki kimi mehsul yoxlamadan kechir. Bir de, user sehv melumat daxil etse, ona yeniden hemin melumati daxil etmek shansi yaranir. Ona gore ashaghda choxlu kod var.
+                        //
+                        int code1;
+                        int quantity1;
                         Console.WriteLine("Existing product codes are shown below:");
                         foreach (var item in Products)
                         {
                             Console.WriteLine($"code - {item.Code} ({item.Name})");
                         }
-                        Console.WriteLine("Enter the code of the product, please");
-                        int code1;
+                        Console.WriteLine("Enter the code of the product, please"); 
                         string code1str = Console.ReadLine();
                         while(!int.TryParse(code1str, out code1) || code1<=1000 )
                         {
                             Console.WriteLine("Insert the code again");
                             code1str = Console.ReadLine();
-                        }
-                        
+                        } 
                         Console.WriteLine("Enter the quantity of the product, please");
-                        int quantity1;
                         string quantity1str = Console.ReadLine();
                         while(!int.TryParse(quantity1str, out quantity1))
                         {
                             Console.WriteLine("Insert the quantity again");
                             quantity1str = Console.ReadLine();
-                        }
-                        
+                        }                       
                         if (quantity1 <= 0)
                             throw new ArgumentOutOfRangeException("Product quantity");
                         Product product1 = Products.FirstOrDefault(s => s.Code == code1);
                         if (product1 == null)
-                            throw new KeyNotFoundException("There are no products with the given code");
+                            throw new ArgumentNullException("There is no product with such code");                     
+                        if (quantity1 <= 0)
+                            throw new ArgumentOutOfRangeException("Product quantity");                                                  
                         while (product1.Quantity == 0)
                         {
                             Console.WriteLine("The product is out of stock.");         
@@ -229,7 +242,9 @@ namespace FinalProjectStore.Services
                              if (quantity1 <= 0)
                                  throw new ArgumentOutOfRangeException("Product quantity");
                              product1 = Products.FirstOrDefault(s => s.Code == code1);
-              
+                            if (product1 == null)
+                                throw new ArgumentNullException("There is no product with such code");
+
                         }
                         while (quantity1 > product1.Quantity)
                         {
@@ -237,21 +252,28 @@ namespace FinalProjectStore.Services
                             Console.WriteLine("Re-enter the quantity");
                             quantity1 = int.Parse(Console.ReadLine());
                         }
-
+                        //
+                        //Mehsul yoxlamadan sonra satisha elave olunur
+                        //
                         SoldProduct sold1 = new(product1);
                         sold1 = new(product1);
                         sold1.quantity = quantity1;
-                        product1.Quantity = product1.Quantity - quantity1;
+                        product1.Quantity -= quantity1;
                         invoice.Cost += product1.Price * quantity1;
                         invoice.SoldProducts.Add(sold1);                        
                         break;
                     case 2:
+                        //
+                        //Axirda biz bashqa bir mehsulu elave etmek istemeyende 2-ye basiriq(yani "no"), ve avtomatik olaraq, satish sistema elave olunur.
+                        //
                         Console.WriteLine("Invoice added");
                         Invoices.Add(invoice);
                         break;
+                    default:
+                        Console.WriteLine("There is no such option");
+                        break;
                 }
-            } while (option!=2);
-                      
+            } while (option!=2);                     
         }
         public void ReturnProduct(int number, string name, int quantity)
         {
@@ -269,6 +291,9 @@ namespace FinalProjectStore.Services
             if (invoice == null)
                 throw new KeyNotFoundException("There are no invoices with the given number");           
             SoldProduct sold = invoice.SoldProducts.FirstOrDefault(s => s.Product.Name.ToLower() == name);
+            //
+            //Qaytarmagh istediyiviz mehsulun melumatlari yuxarda yoxlanilir. Ashaghda ise, ne sayda qaytarmaq istediyimizi yoxlayir. Eger biz aldiqimizdan chox qaytarmagh isteyirikse, bize xeberdarliq edir ve yeniden sayi daxil etmek shansini yaradir.
+            //
             while (sold.quantity < quantity)
             {
                 Console.WriteLine("You can not return more than you bought.");
@@ -276,15 +301,18 @@ namespace FinalProjectStore.Services
                 quantity = int.Parse(Console.ReadLine());
                 if (quantity <= 0)
                     throw new ArgumentOutOfRangeException("Product quantity");
-            }
-                
+            }             
             if (sold == null)
                 throw new KeyNotFoundException("There are no products in the given invoice");         
-            
-            product.Quantity = product.Quantity + quantity;
+            //
+            //Ashagda mehsul qaytarilir(anbarda hemin mehsul qaytardighimiz miqdar geder choxalir, ve satishin mebleqi da azalir)
+            //
+            product.Quantity += quantity;
             invoice.Cost -= product.Price * quantity;
-            sold.quantity = sold.quantity - quantity;
-         
+            sold.quantity -= quantity;
+         //
+         //Ashagdaki mexanizma bizden daha bir mehsulu qaytarmaghimizi sorushur. Eger qaytarmag isteyirikse, yuxardaki prosesslari yeniden yere yetiri ve mehsul elave olunur. User neyise sehv daxil etse, kod ona yeniden hemin melumati daxil etmek shansini yaradir, ona gore choxlu kod var ashaghda.
+         //
             do
             {
                 Console.WriteLine("Do you want to return another item?");
@@ -300,13 +328,12 @@ namespace FinalProjectStore.Services
                 switch (option)
                 {
                     case 1:
-                       
+                        int quantity1;
                         Console.WriteLine("Enter the name of the product, please");
                         string name1 = Console.ReadLine().ToLower();
                         if (string.IsNullOrEmpty(name1))
                             throw new ArgumentNullException("Product name");
-                        Console.WriteLine("Enter the quantity of the product, please");
-                        int quantity1;
+                        Console.WriteLine("Enter the quantity of the product, please");     
                         string quantity1str = Console.ReadLine();
                         while(!int.TryParse(quantity1str, out quantity1))
                         {
@@ -327,50 +354,55 @@ namespace FinalProjectStore.Services
                             Console.WriteLine("Enter the quantity again, please");
                             quantity1 = int.Parse(Console.ReadLine());
                         }
-                            
-
-                        product1.Quantity = product1.Quantity + quantity1;
+                        //
+                        //Yuxarda yoxlama ughurlu olsa, mehsul ashaghi gedib qaytarilir.
+                        //
+                        product1.Quantity += quantity1;
                         invoice.Cost -= product1.Price * quantity1;
-                        sold1.quantity = sold1.quantity - quantity1;
+                        sold1.quantity -= quantity1;
                         break;
                     case 2:                      
-
+                        //
+                        //Eger artiq hechne qaytarmagh istemirikse, prosess dayandirilir. Ve eger biz butov mehsullari qaytarsag ve artiq satishin mebleqi 0 olsa, avtomatik olaraq satish silinir(statusu "Deleted" olur)
+                        //
                         if (invoice.Cost == 0.00)
                         {
                             invoice.Status = "Deleted";
                         }                         
                         break;
+                    default:
+                        Console.WriteLine("There is no such option");
+                        break;
                 }
             } while (option != 2);
-
         }
         public List<Invoice> ReturnInvoices()
         {
+            //Bu metod sadece umumi satishlari gorsedir
             return Invoices.ToList();
         }       
         public void DeleteInvoice(int no)
         {
             if (no <= 0)
-                throw new ArgumentOutOfRangeException("Invoice number");
-            
+                throw new ArgumentOutOfRangeException("Invoice number");     
             Invoice invoice = Invoices.FirstOrDefault(s=> s.Number == no);
             if (invoice == null)
                 throw new KeyNotFoundException("There is no invoice with the given number");
-
             var res = invoice.SoldProducts.ToList();
             if (res == null)
                 throw new KeyNotFoundException("There are no products in the given invoice");
-  
+            //
+            //Ashaghdaki mexanizma, satish silinennen sonra, butov "Satish Itemlari" qaytarir. Sonra ise satishin statusunu "Deleted" kimi gorsedir
+            //
             foreach (var item in res)
             {
                 item.Product.Quantity += item.quantity;
             }
-            invoice.Status = "Deleted";
-            
+            invoice.Status = "Deleted";   
         }
         public List<Invoice> SearchByDate(DateTime startdate, DateTime enddate)
         {
-            
+            //Ashaghdaki metod satishlari tarix aralighina gore axtarir ve neticeni List kimi verir
             var result = Invoices.Where(m => m.Date>= startdate && m.Date <= enddate);
             if (result == null)
                 throw new KeyNotFoundException("There were no invoices during the given date range");
@@ -378,6 +410,7 @@ namespace FinalProjectStore.Services
         }
         public List<Invoice> SearchInvoiceByPrice(double startcost, double endcost)
         {
+            //Bu metod end-user-dan iki dene mebleg isteyir(bashlabgich ve bitme mebelghi). Hemin mebleg aralighina esasen olan satishlari gorsedir. List qaytarir
             if (startcost <= 0)
                 throw new ArgumentOutOfRangeException("Invocie start cost");
             if (endcost <= 0)
@@ -389,6 +422,7 @@ namespace FinalProjectStore.Services
         }
         public List<Invoice> SearchByNumber(int no)
         {
+            //Bu metod satishin nomresine esasen hemin satish haqqinda informasiya teqdim edir.
             if (no <= 0)
                 throw new ArgumentOutOfRangeException("Invoice number");
             var res = Invoices.FindAll(s => s.Number == no);
@@ -398,12 +432,12 @@ namespace FinalProjectStore.Services
         }
         public List<Invoice> SearchByOnlyDate(DateTime date)
         {
+            //Bu metod sadece bir tarixe gore satishi axtarir. Hemin tarixde(yani hemin gunde) heyata kechirilmish satishlari List kimi gorsedecey.
             var res = Invoices.Where(s => s.Date.Day == date.Day && s.Date.Month == date.Month && s.Date.Month == date.Month && s.Date.Year == date.Year);
             if (res == null)
                 throw new KeyNotFoundException("There were no inoices on this day");
             return res.ToList();
         }
         #endregion
-
     }
 }

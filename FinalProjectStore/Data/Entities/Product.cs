@@ -24,6 +24,5 @@ namespace FinalProjectStore.Data.Entities
             Count++;
             Code = Count;
         }
-
     }
 }

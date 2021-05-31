@@ -20,6 +20,5 @@ namespace FinalProjectStore.Data.Entities
             Number = Count;
             Date = DateTime.Now;
         }
-
     }
 }

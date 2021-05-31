@@ -9,22 +9,23 @@ namespace FinalProjectStore.Services
     {
         static MarketMenu market = new();
 
-        #region Display
+        #region Display Methods
         public static void DisplayProducts()
         {
+            //Bu metod umumi satishlari table kimi gorsedir
             var table = new ConsoleTable("Code", "Name", "Category", "Price", "Quantity");
-
-            foreach (var product in market.Products)
+            foreach (var product in market.ReturnProducts())
             {
                 table.AddRow(product.Code, product.Name.ToString().First().ToString().ToUpper() + product.Name.Substring(1), product.Category.ToString().First().ToString().ToUpper() + product.Category.Substring(1), product.Price.ToString("0.00"), product.Quantity);
             }
-
             table.Write();
             Console.WriteLine();
         }
         public static void DisplayProductsByCategory()
         {
+            //Bu metod kategoriyaya gore axtarish edir ve eticeni table-a chixardir
             var table = new ConsoleTable("Name", "Code", "Category", "Price", "Quantity");
+            //Ashagdaki mexanizma size var olan kategoriyalari gorsedir, ve siz kategoriyani sechib elnen daxil etmelisiniz. Input case-INSENSITIVE-di(yani isteyirsiz balaca ya da boyuk herifler ile daxil edin, ferqi yoxdu)
             Console.WriteLine("=============Existing categories are below:==============");
             var categories = Enum.GetValues(typeof(Category));
             foreach (var item in categories)
@@ -36,10 +37,10 @@ namespace FinalProjectStore.Services
             try
             {
                 foreach (var item in market.SearchByCategory(category))
+                    //Ashagdaki prosess mehsulun melumatlarini table-a doldurur, ve string melumatlarinin bash herifini boyuk edir.
                 {
                     table.AddRow(item.Name.ToString().First().ToString().ToUpper() + item.Name.Substring(1), item.Code, item.Category.ToString().First().ToString().ToUpper() + item.Category.Substring(1), item.Price.ToString("0.00"), item.Quantity);
                 }
-
                 table.Write();
                 Console.WriteLine();
             }
@@ -48,12 +49,10 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Something went wrong. Try again, please.");
                 Console.WriteLine(e.Message);
             }
-            
-
-
         }
         public static void DisplayProductByPrice()
         {
+            //Bu metod mehsullari qiymet aralighina gore table-a chixardir
             var table = new ConsoleTable("Name", "Code", "Category", "Price", "Quantity");
             Console.WriteLine("Insert the minimum price of the product, please");
             double startprice;
@@ -63,7 +62,6 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Insert the minimum price again");
                 startpricestr = Console.ReadLine();
             }
-
             Console.WriteLine("Insert the maximum price of the product, please");
             double endprice;
             string endpricestr = Console.ReadLine();
@@ -89,6 +87,7 @@ namespace FinalProjectStore.Services
         }
         public static void DisplayProductByName()
         {
+            //Bu metod ada gore axtarish edir ve mehsullari table-a chixardir. Adi ozuvuz daxil etmelisiniz. Ve ad case-INSENSITIVE-di(yani isteyirsiz balacaynan isteyirsiz boyuknen daxil edin. Anbara giren melumat filter olunub lower-case ile girir.)
             var table = new ConsoleTable("Names", "Code", "Category", "Price", "Quantity");
             Console.WriteLine("Insert the name of the product, please");
             var name = Console.ReadLine().ToLower();
@@ -106,22 +105,21 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Something went wrong. Please, try again");
                 Console.WriteLine(e.Message);
             }
-
         }
         public static void DisplayInvoices()
         {
-            var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Status");
+            //Bu metod umumi satishlari table-a chixardir.
+            var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Status", "Date");
             foreach (var item in market.ReturnInvoices())
             {
-                table.AddRow(item.Number, item.Cost.ToString("0.00"), item.SoldProducts.Count, item.Status);
-
+                table.AddRow(item.Number, item.Cost.ToString("0.00"), item.SoldProducts.Count, item.Status, item.Date);
             }
             table.Write();
-
             Console.WriteLine();
         }
         public static void DisplayInvoicesByDate()
         {
+            //Bu metod tarix aralighina gore satishlari tapib table-a chixardir.
             DateTime startdate;
             DateTime enddate;
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Date", "Status");
@@ -156,6 +154,7 @@ namespace FinalProjectStore.Services
         }
         public static void DisplayInvoiceByCost()
         {
+            //Bu metod satishin meblegh aralighina gore satishlari gorsedir ve table-a chixardir.
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Date", "Status");
             Console.WriteLine("Insert the minimum cost, please");
             double startcost;
@@ -191,6 +190,10 @@ namespace FinalProjectStore.Services
         }
         public static void DisplayInvoiceByNo()
         {
+            //Bu metod 2 dene table qaytarir. Birinci table-da satish barede melumat gorsedilir. Ikinci satishda satilan mehsullar haqqinda melumat verilir.
+            //
+            //Birinci table ashaghdadi
+            //
             var table = new ConsoleTable("Number", "Cost", "Date", "Status");
             Console.WriteLine("Existing invoice numbers are shown below:");
             foreach (var item in market.Invoices)
@@ -218,9 +221,11 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Something went wrong. Please, try again");
                 Console.WriteLine(e.Message);
             }
+            //
+            //Ikinci table ashaghdadi
+            //
             var table1 = new ConsoleTable("Name", "Price", "Quantity", "Number");
-            var res = market.Invoices.Find(s=>s.Number == no);
-            
+            var res = market.Invoices.Find(s=>s.Number == no);   
             try
             {
                 foreach (var invoice in res.SoldProducts)
@@ -238,6 +243,7 @@ namespace FinalProjectStore.Services
         }
         public static void DisplayInvoiceByOnlyDate()
         {
+            //Bu metod deqiq tarixe gore satishlari table-a chixardir.
             DateTime date;
             var table = new ConsoleTable("Number", "Cost", "Quantity of the product types", "Date", "Status");
             Console.WriteLine("Insert the date of the invoice, please (mm.dd.yyyy)");
@@ -264,9 +270,11 @@ namespace FinalProjectStore.Services
         }
         #endregion
 
-        #region Addition/Removals
+        #region Addition/Removal Methods
         public static void AddProductMenu()
         {
+            //Bu metod qarshi terefden mehsul haqqda melumat goturur ve variable-lara onu menimsedir.
+            //Kategoriyani daxil etmek istesez size var olan kategoriyalari avtomatik olarag teqdim edir.
             Console.WriteLine("Enter the name of the product, please");
             string name = Console.ReadLine().ToLower();
             Console.WriteLine("Enter the price of the product, please");
@@ -276,8 +284,7 @@ namespace FinalProjectStore.Services
             {
                 Console.WriteLine("Please, insert the price again");
                 pricestr = Console.ReadLine();
-            }
-            
+            } 
             Console.WriteLine("=============Existing categories are below:==============");
             var categories = Enum.GetValues(typeof(Category));
             foreach (var item in categories)
@@ -286,7 +293,6 @@ namespace FinalProjectStore.Services
             }
             Console.WriteLine("Enter the name of the product's category, please");
             string category = Console.ReadLine();
-
             Console.WriteLine("Enter the quantity of the product, please");
             int quantity;
             string quantitystr = Console.ReadLine();
@@ -304,11 +310,11 @@ namespace FinalProjectStore.Services
             {
                 Console.WriteLine("Something went wrong. Try again, please");
                 Console.WriteLine(e.Message);
-            }
-            
+            }  
         }
         public static void AddChangeProductMenu()
         {
+            //Bu metod qarshi terefden evvel kod, sonra ise duzelish melumatlarini alir. Ilk once maghaza olan mehsullarin kodlarini ve yaninda adlarini gorsedir ki, siz chashmayasiz.
             Console.WriteLine("==============Existing product codes are shown below:==============");
             foreach (var item in market.Products)
             {
@@ -348,7 +354,6 @@ namespace FinalProjectStore.Services
             }
             Console.WriteLine("Enter the new category of the product, please");
             string category = Console.ReadLine();
-
             try
             {
                 market.ChangeProductByCode(code, name, price, quantity, category);
@@ -358,11 +363,11 @@ namespace FinalProjectStore.Services
             {
                 Console.WriteLine("Something went wrong. Try again, please");
                 Console.WriteLine(e.Message);
-            }
-            
+            }   
         }
         public static void AddRemoveProductMenu()
         {
+            //Bu metod qarshi terefden mehsulun kodu isteyir ve hemin mehsulu silir
             Console.WriteLine("==============Existing product codes are shown below:==============");
             foreach (var item in market.Products)
             {
@@ -376,7 +381,6 @@ namespace FinalProjectStore.Services
                 Console.WriteLine("Insert the code again");
                 codestr = Console.ReadLine();
             }
-
             try
             {
                 market.DeleteProductByCode(code);
@@ -386,11 +390,11 @@ namespace FinalProjectStore.Services
             {
                Console.WriteLine("Something went wrong. Try again, please");
                Console.WriteLine(e.Message);
-            }
-            
+            }    
         }
         public static void AddInvoiceMenu()
         {
+            //Bu metod qarshi terefden satish yaradilmasi uchun melumat alir
             Console.WriteLine("==============Existing product codes are shown below:==============");
             foreach (var item in market.Products)
             {
@@ -414,18 +418,17 @@ namespace FinalProjectStore.Services
             }
             try
             {
-                market.AddInvoice(code, quantity);
-                
+                market.AddInvoice(code, quantity); 
             }
             catch (Exception e)
             {
                Console.WriteLine("Something went wrong. Try again, please");
                Console.WriteLine(e.Message);
-            }
-            
+            }   
         }
         public static void AddReturnProductMenu()
         {
+            //Bu metod satihsdan mehsulu qaytarmag uchun qarshi terefden melumat alir
             Console.WriteLine("==============Existing invoice numbers are shown below:==============");
             foreach (var item in market.Invoices)
             {
@@ -453,17 +456,16 @@ namespace FinalProjectStore.Services
             {
                 market.ReturnProduct(number, name, quantity);
                 Console.WriteLine("==============Product/products returned==============");
-                
             }
             catch (Exception e)
             {
                 Console.WriteLine("Something went wrong. Try again, please");
                 Console.WriteLine(e.Message);
-            }
-            
+            }  
         }
         public static void AddDeleteInvoiceMenu()
         {
+            //Bu metod qarshi terefden satishi silmek uchun satish haqqinda melumat alir(yani satishin nomresi)
             Console.WriteLine("Existing invoice numbers are shown below:");
             foreach (var item in market.Invoices)
             {
@@ -486,8 +488,7 @@ namespace FinalProjectStore.Services
             {
                 Console.WriteLine("Something went wrong. Try again, please");
                 Console.WriteLine(e.Message);
-            }
-            
+            }  
         }
         #endregion 
     }

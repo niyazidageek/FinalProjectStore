@@ -7,6 +7,5 @@ namespace FinalProjectStore.Data.Common
         public int Number { get; set; }
         public int Quantity { get; set; }
         public int Code { get; set; }
-
     }
 }
